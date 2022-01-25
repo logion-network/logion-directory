@@ -1,0 +1,70 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "logion directory REST API views definition",
+    "version": "0.1.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "FetchLegalOfficersView": {
+        "type": "object",
+        "properties": {
+          "legalOfficers": {
+            "type": "array",
+            "description": "All the legal officers",
+            "items": {
+              "$ref": "#/components/schemas/LegalOfficerView"
+            }
+          }
+        },
+        "title": "FetchLegalOfficersView",
+        "description": "The fetched Legal Officers"
+      },
+      "LegalOfficerView": {
+        "type": "object",
+        "properties": {
+        "address": {
+          "type": "string",
+          "description": "The SS58 address of the legal officer"
+        },
+        "userIdentity": {
+          "description": "The identification data of the legal officer",
+          "$ref": "#/components/schemas/UserIdentityView"
+        },
+        "details": {
+          "type": "string",
+          "description": "Any additional public info"
+        },
+        "node": {
+          "type": "string",
+          "description": "The node info",
+          "example": "https://node01.logion.network"
+        }
+      }},
+      "UserIdentityView": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "E-mail"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number"
+          }
+        },
+        "title": "UserIdentityView",
+        "description": "Physical person identification data"
+      }
+    }
+  }
+}
