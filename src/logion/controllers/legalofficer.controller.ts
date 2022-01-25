@@ -24,6 +24,10 @@ type FetchLegalOfficersView = components["schemas"]["FetchLegalOfficersView"]
 @Controller('/legal-officer')
 export class LegalOfficerController extends ApiController {
 
+    constructor() {
+        super();
+    }
+
     static fetchLegalOfficers(spec: OpenAPIV3.Document) {
         const operationObject = spec.paths["/api/legal-officer"].get!;
         operationObject.summary = "Gets the list of all legal officers";
