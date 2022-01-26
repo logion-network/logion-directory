@@ -24,24 +24,29 @@
       "LegalOfficerView": {
         "type": "object",
         "properties": {
-        "address": {
-          "type": "string",
-          "description": "The SS58 address of the legal officer"
-        },
-        "userIdentity": {
-          "description": "The identification data of the legal officer",
-          "$ref": "#/components/schemas/UserIdentityView"
-        },
-        "details": {
-          "type": "string",
-          "description": "Any additional public info"
-        },
-        "node": {
-          "type": "string",
-          "description": "The node info",
-          "example": "https://node01.logion.network"
+          "address": {
+            "type": "string",
+            "description": "The SS58 address of the legal officer"
+          },
+          "userIdentity": {
+            "description": "The identification data of the legal officer",
+            "$ref": "#/components/schemas/UserIdentityView"
+          },
+          "postalAddress": {
+            "description": "The identification data of the legal officer",
+            "$ref": "#/components/schemas/PostalAddressView"
+          },
+          "additionalDetails": {
+            "type": "string",
+            "description": "Any additional public info"
+          },
+          "node": {
+            "type": "string",
+            "description": "The node info",
+            "example": "https://node01.logion.network"
+          }
         }
-      }},
+      },
       "UserIdentityView": {
         "type": "object",
         "properties": {
@@ -64,6 +69,37 @@
         },
         "title": "UserIdentityView",
         "description": "Physical person identification data"
+      },
+      "PostalAddressView": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "description": "The company of the Legal Officer"
+          },
+          "line1": {
+            "type": "string",
+            "description": "First address line"
+          },
+          "line2": {
+            "type": "string",
+            "description": "Second address line"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country"
+          }
+        },
+        "title": "PostalAddressView",
+        "description": "A postal address"
       }
     }
   }
