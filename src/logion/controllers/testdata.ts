@@ -1,8 +1,6 @@
-import { components } from "./components";
+import { LegalOfficerDescription } from "../model/legalofficer.model";
 
-type LegalOfficerView = components["schemas"]["LegalOfficerView"]
-
-export const LEGAL_OFFICERS: LegalOfficerView[] = [
+export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
         address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
         userIdentity: {
@@ -19,6 +17,7 @@ export const LEGAL_OFFICERS: LegalOfficerView[] = [
             city: "Etterbeek",
             country: "Belgique"
         },
+        additionalDetails: "",
         node: "http://localhost:8080",
     },
     {
@@ -37,6 +36,7 @@ export const LEGAL_OFFICERS: LegalOfficerView[] = [
             city: "Lyon",
             country: "France"
         },
+        additionalDetails: "",
         node: "http://localhost:8081",
     },
     {
@@ -55,6 +55,7 @@ export const LEGAL_OFFICERS: LegalOfficerView[] = [
             city: "Bourges",
             country: "France"
         },
+        additionalDetails: "",
         node: "http://localhost:8082",
     },
     {
@@ -67,7 +68,9 @@ export const LEGAL_OFFICERS: LegalOfficerView[] = [
 
         },
         postalAddress: {
+            company: "",
             line1: "Rue du Calvaire, 1/A",
+            line2: "",
             postalCode: "5620",
             city: "FLORENNES",
             country: "Belgique"
@@ -86,9 +89,12 @@ export const LEGAL_OFFICERS: LegalOfficerView[] = [
         postalAddress: {
             company: "Venezia & Associés",
             line1: "130 avenue Charles de Gaulle",
+            line2: "",
             postalCode: "92200",
             city: "Neuilly sur seine",
             country: "France"
-        }
+        },
+        additionalDetails: "",
+        node: "http://localhost:8082"
     }
 ]
