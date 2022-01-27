@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import { addTag, setControllerTag, getDefaultResponses, addPathParameter } from "./doc";
 import { Controller, ApiController, HttpGet, Async } from "dinoloop";
 import { components } from "./components";
-import { LEGAL_OFFICERS } from "./testdata";
+import { LegalOfficerRepository, LegalOfficerAggregateRoot } from "../model/legalofficer.model";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';
@@ -24,7 +24,8 @@ type FetchLegalOfficersView = components["schemas"]["FetchLegalOfficersView"]
 @Controller('/legal-officer')
 export class LegalOfficerController extends ApiController {
 
-    constructor() {
+    constructor(
+        private legalOfficerRepository: LegalOfficerRepository) {
         super();
     }
 
@@ -38,7 +39,8 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('')
     @Async()
     async fetchLegalOfficers(): Promise<FetchLegalOfficersView> {
-        return { legalOfficers: LEGAL_OFFICERS };
+        const legalOfficers = await this.legalOfficerRepository.findAll();
+        return { legalOfficers: legalOfficers.map(this.toView) }
     }
 
     static getLegalOfficer(spec: OpenAPIV3.Document) {
@@ -52,10 +54,35 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('/:address')
     @Async()
     async getLegalOfficer(address: string): Promise<LegalOfficerView> {
-        const legalOfficer = LEGAL_OFFICERS.find(lo => lo.address === address);
+        const legalOfficer = await this.legalOfficerRepository.findByAddress(address)
         if (legalOfficer) {
-            return legalOfficer
+            return this.toView(legalOfficer)
         }
         throw new Error(`Unknown address: ${address}`)
+    }
+
+    private toView(legalOfficer: LegalOfficerAggregateRoot): LegalOfficerView {
+        const description = legalOfficer.getDescription();
+        const userIdentity = description.userIdentity;
+        const postalAddress = description.postalAddress;
+        return {
+            address: description.address,
+            userIdentity: {
+                firstName: userIdentity.firstName,
+                lastName: userIdentity.lastName,
+                email: userIdentity.email,
+                phoneNumber: userIdentity.phoneNumber,
+            },
+            postalAddress: {
+                company: postalAddress.company,
+                line1: postalAddress.line1,
+                line2: postalAddress.line2,
+                postalCode: postalAddress.postalCode,
+                city: postalAddress.city,
+                country: postalAddress.country,
+            },
+            additionalDetails: description.additionalDetails,
+            node: description.node
+        }
     }
 }

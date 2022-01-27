@@ -33,7 +33,7 @@
             "$ref": "#/components/schemas/UserIdentityView"
           },
           "postalAddress": {
-            "description": "The identification data of the legal officer",
+            "description": "The postal address of the legal officer",
             "$ref": "#/components/schemas/PostalAddressView"
           },
           "additionalDetails": {
