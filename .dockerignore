@@ -1,0 +1,8 @@
+node_modules
+.github
+.settings
+dist
+coverage
+.project
+.env
+.idea

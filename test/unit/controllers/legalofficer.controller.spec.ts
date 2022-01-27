@@ -16,7 +16,7 @@ describe("LegalOfficerController", () => {
             .expect(200)
             .expect('Content-Type', /application\/json/)
             .then(response => {
-                expect(response.body.legalOfficers.length).toBe(5)
+                expect(response.body.legalOfficers.length).toBe(LEGAL_OFFICERS.length)
             });
     });
 
@@ -29,10 +29,10 @@ describe("LegalOfficerController", () => {
             .then(response => {
                 expect(response.body.address).toBe("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
                 const userIdentity = response.body.userIdentity;
-                expect(userIdentity.firstName).toBe("Patrick")
-                expect(userIdentity.lastName).toBe("Gielen")
-                expect(userIdentity.email).toBe("patrick@logion.network")
-                expect(userIdentity.phoneNumber).toBe("+32 498 237 107")
+                expect(userIdentity.firstName).toBe("Alice")
+                expect(userIdentity.lastName).toBe("Alice")
+                expect(userIdentity.email).toBe("alice@logion.network")
+                expect(userIdentity.phoneNumber).toBe("+32 498 00 00 00")
                 let postalAddress = response.body.postalAddress;
                 expect(postalAddress.company).toBe("MODERO")
                 expect(postalAddress.line1).toBe("Huissier de Justice Etterbeek")
@@ -53,8 +53,6 @@ function mockRepository(container: Container) {
         mockLegalOfficer(repository, 0),
         mockLegalOfficer(repository, 1),
         mockLegalOfficer(repository, 2),
-        mockLegalOfficer(repository, 3),
-        mockLegalOfficer(repository, 4),
     ];
 
     repository.setup(instance => instance.findAll())
