@@ -4,10 +4,10 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
         address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
         userIdentity: {
-            firstName: "Patrick",
-            lastName: "Gielen",
-            email: "patrick@logion.network",
-            phoneNumber: "+32 498 237 107",
+            firstName: "Alice",
+            lastName: "Alice",
+            email: "alice@logion.network",
+            phoneNumber: "+32 498 00 00 00",
         },
         postalAddress: {
             company: "MODERO",
@@ -23,10 +23,10 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
         address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
         userIdentity: {
-            firstName: "Guillaume",
-            lastName: "Grain",
-            email: "g.grain@adrastee-lyon.fr",
-            phoneNumber: "+33 4 78 52 87 56",
+            firstName: "Bob",
+            lastName: "Bob",
+            email: "bob@logion.network",
+            phoneNumber: "+33 4 00  00 00 00",
         },
         postalAddress: {
             company: "SELARL ADRASTEE",
@@ -42,10 +42,10 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
         address: "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
         userIdentity: {
-            firstName: "Alain",
-            lastName: "Barland",
-            email: "alain.barland@auxilia-conseils.com",
-            phoneNumber: "+33 2 48 67 50 50",
+            firstName: "Charlie",
+            lastName: "Charlie",
+            email: "charlie@logion.network",
+            phoneNumber: "+33 2 00 00 00 00",
         },
         postalAddress: {
             company: "AUXILIA CONSEILS 18",
@@ -57,44 +57,5 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
         },
         additionalDetails: "",
         node: "http://localhost:8082",
-    },
-    {
-        address: "5FmqTpGanDBVHedXf42fiuWD8d2iBa2Ve8EfG13juifnpgat",
-        userIdentity: {
-            firstName: "Eline",
-            lastName: "Duysens",
-            email: "e.duysens@chartierpartners.be",
-            phoneNumber: "+32 82 22 50 50"
-
-        },
-        postalAddress: {
-            company: "",
-            line1: "Rue du Calvaire, 1/A",
-            line2: "",
-            postalCode: "5620",
-            city: "FLORENNES",
-            country: "Belgique"
-        },
-        additionalDetails: "CHARTIER & PARTNERS\nSiège administratif :\nzoning de la voie cuivrée, 34\n5503 Sorinnes (Dinant)\nBelgique\nEmail: info@chartierpartners.be",
-        node: "http://localhost:8082"
-    },
-    {
-        address: "5GYirZEq8byGJePM9FM3JQG8Zwc5B6AcNpqgbrFvGRw2VQKE",
-        userIdentity: {
-            firstName: "Sylvian",
-            lastName: "Dorol",
-            email: "s.dorol@venezia-huissiers.com",
-            phoneNumber: "+ 33 1 46 24 15 21",
-        },
-        postalAddress: {
-            company: "Venezia & Associés",
-            line1: "130 avenue Charles de Gaulle",
-            line2: "",
-            postalCode: "92200",
-            city: "Neuilly sur seine",
-            country: "France"
-        },
-        additionalDetails: "",
-        node: "http://localhost:8082"
     }
 ]
