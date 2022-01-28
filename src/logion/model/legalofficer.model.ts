@@ -45,7 +45,6 @@ export class LegalOfficerAggregateRoot {
 
     getDescription(): LegalOfficerDescription {
         return {
-            address: this.address || "",
             userIdentity: {
                 firstName: this.firstName || "",
                 lastName: this.lastName || "",
@@ -67,7 +66,6 @@ export class LegalOfficerAggregateRoot {
 }
 
 export interface LegalOfficerDescription {
-    readonly address: string
     readonly userIdentity: UserIdentity
     readonly postalAddress: PostalAddress
     readonly additionalDetails: string
@@ -90,6 +88,38 @@ export interface PostalAddress {
     readonly country: string
 }
 
+export interface NewLegalOfficerParameters {
+    readonly address: string
+    readonly description: LegalOfficerDescription
+}
+
+@injectable()
+export class LegalOfficerFactory {
+
+    newLegalOfficer(param: NewLegalOfficerParameters): LegalOfficerAggregateRoot {
+        const legalOfficer = new LegalOfficerAggregateRoot();
+        legalOfficer.address = param.address
+
+        const userIdentity = param.description.userIdentity;
+        legalOfficer.firstName = userIdentity.firstName;
+        legalOfficer.lastName = userIdentity.lastName;
+        legalOfficer.email = userIdentity.email;
+        legalOfficer.phoneNumber = userIdentity.phoneNumber;
+
+        const postalAddress = param.description.postalAddress
+        legalOfficer.company = postalAddress.company;
+        legalOfficer.line1 = postalAddress.line1;
+        legalOfficer.line2 = postalAddress.line2;
+        legalOfficer.postalCode = postalAddress.postalCode;
+        legalOfficer.city = postalAddress.city;
+        legalOfficer.country = postalAddress.country;
+
+        legalOfficer.additionalDetails = param.description.additionalDetails
+        legalOfficer.node = param.description.node
+        return legalOfficer;
+    }
+}
+
 @injectable()
 export class LegalOfficerRepository {
 
@@ -106,4 +136,9 @@ export class LegalOfficerRepository {
     public findAll(): Promise<LegalOfficerAggregateRoot []> {
         return this.repository.find();
     }
+
+    public async save(root: LegalOfficerAggregateRoot): Promise<void> {
+        await this.repository.save(root);
+    }
+
 }

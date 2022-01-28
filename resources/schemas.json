@@ -47,6 +47,28 @@
           }
         }
       },
+      "CreateOrUpdateLegalOfficerView": {
+        "type": "object",
+        "properties": {
+          "userIdentity": {
+            "description": "The identification data of the legal officer",
+            "$ref": "#/components/schemas/UserIdentityView"
+          },
+          "postalAddress": {
+            "description": "The postal address of the legal officer",
+            "$ref": "#/components/schemas/PostalAddressView"
+          },
+          "additionalDetails": {
+            "type": "string",
+            "description": "Any additional public info"
+          },
+          "node": {
+            "type": "string",
+            "description": "The node info",
+            "example": "https://node01.logion.network"
+          }
+        }
+      },
       "UserIdentityView": {
         "type": "object",
         "properties": {

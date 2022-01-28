@@ -3,5 +3,5 @@
     "all": true,
     "check-coverage": true,
     "reporter": ["text", "html"],
-    "exclude": ["db-tools", "coverage"]
+    "exclude": ["db-tools", "coverage", "src/logion/lib/polkadot"]
 }

@@ -1,9 +1,18 @@
 import { OpenAPIV3 } from "openapi-types";
 import { injectable } from "inversify";
-import { addTag, setControllerTag, getDefaultResponses, addPathParameter } from "./doc";
-import { Controller, ApiController, HttpGet, Async } from "dinoloop";
+import { addTag, setControllerTag, getDefaultResponses, addPathParameter, getRequestBody } from "./doc";
+import { Controller, ApiController, HttpGet, Async, HttpPut } from "dinoloop";
 import { components } from "./components";
-import { LegalOfficerRepository, LegalOfficerAggregateRoot } from "../model/legalofficer.model";
+import {
+    LegalOfficerRepository,
+    LegalOfficerAggregateRoot,
+    LegalOfficerDescription,
+    LegalOfficerFactory
+} from "../model/legalofficer.model";
+import { AuthenticationService } from "../services/authentication.service";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
+import { requireDefined } from "../lib/assertions";
+import { AuthorityService } from "../services/authority.service";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';
@@ -15,17 +24,23 @@ export function fillInSpec(spec: OpenAPIV3.Document): void {
 
     LegalOfficerController.fetchLegalOfficers(spec);
     LegalOfficerController.getLegalOfficer(spec);
+    LegalOfficerController.createOrUpdateLegalOfficer(spec);
 }
 
 type LegalOfficerView = components["schemas"]["LegalOfficerView"]
 type FetchLegalOfficersView = components["schemas"]["FetchLegalOfficersView"]
+type CreateOrUpdateLegalOfficerView = components["schemas"]["CreateOrUpdateLegalOfficerView"]
 
 @injectable()
 @Controller('/legal-officer')
 export class LegalOfficerController extends ApiController {
 
     constructor(
-        private legalOfficerRepository: LegalOfficerRepository) {
+        private legalOfficerRepository: LegalOfficerRepository,
+        private legalOfficerFactory: LegalOfficerFactory,
+        private authenticationService: AuthenticationService,
+        private authorityService: AuthorityService,
+        ) {
         super();
     }
 
@@ -58,7 +73,7 @@ export class LegalOfficerController extends ApiController {
         if (legalOfficer) {
             return this.toView(legalOfficer)
         }
-        throw new Error(`Unknown address: ${address}`)
+        throw new Error(`Unknown address: ${ address }`)
     }
 
     private toView(legalOfficer: LegalOfficerAggregateRoot): LegalOfficerView {
@@ -66,7 +81,7 @@ export class LegalOfficerController extends ApiController {
         const userIdentity = description.userIdentity;
         const postalAddress = description.postalAddress;
         return {
-            address: description.address,
+            address: legalOfficer.address,
             userIdentity: {
                 firstName: userIdentity.firstName,
                 lastName: userIdentity.lastName,
@@ -84,5 +99,49 @@ export class LegalOfficerController extends ApiController {
             additionalDetails: description.additionalDetails,
             node: description.node
         }
+    }
+
+    static createOrUpdateLegalOfficer(spec: OpenAPIV3.Document) {
+        const operationObject = spec.paths["/api/legal-officer"].put!;
+        operationObject.summary = "Creates or updates the details of a legal officer";
+        operationObject.description = ".";
+        operationObject.requestBody = getRequestBody({
+            description: "Legal Officer details to be created/updated",
+            view: "CreateOrUpdateLegalOfficerView"
+        })
+        operationObject.responses = getDefaultResponses("LegalOfficerView");
+        addPathParameter(operationObject, 'address', "The Polkadot address of the expected Legal Officer")
+    }
+
+    @HttpPut('')
+    @Async()
+    async createOrUpdateLegalOfficer(createOrUpdate: CreateOrUpdateLegalOfficerView): Promise<LegalOfficerView> {
+        const address = this.authenticationService.authenticatedUser(this.request).address;
+        if (!await this.authorityService.isLegalOfficer(address)) {
+            throw new UnauthorizedException(`${ address } is not a Legal Officer.`)
+        }
+        const userIdentity = requireDefined(createOrUpdate.userIdentity);
+        const postalAddress = requireDefined(createOrUpdate.postalAddress);
+        const description:LegalOfficerDescription = {
+            userIdentity: {
+                firstName: requireDefined(userIdentity.firstName),
+                lastName: requireDefined(userIdentity.lastName),
+                email: requireDefined(userIdentity.email),
+                phoneNumber: requireDefined(userIdentity.phoneNumber),
+            },
+            postalAddress: {
+                company: postalAddress.company || "",
+                line1: requireDefined(postalAddress.line1),
+                line2: postalAddress.line2 || "",
+                postalCode: requireDefined(postalAddress.postalCode),
+                city: requireDefined(postalAddress.city),
+                country: requireDefined(postalAddress.country),
+            },
+            additionalDetails: createOrUpdate.additionalDetails || "",
+            node: requireDefined(createOrUpdate.node)
+        }
+        const legalOfficer = this.legalOfficerFactory.newLegalOfficer({ address, description });
+        await this.legalOfficerRepository.save(legalOfficer)
+        return this.toView(legalOfficer);
     }
 }
