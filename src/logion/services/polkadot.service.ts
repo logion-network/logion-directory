@@ -97,7 +97,8 @@ export class PolkadotService {
                         "Account": "AccountId",
                         "Loc": "LocId"
                     }
-                }
+                },
+                Keys: "SessionKeys2"
             }
         });
     }
