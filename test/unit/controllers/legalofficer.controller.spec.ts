@@ -79,9 +79,19 @@ describe("LegalOfficerController", () => {
                 expect(response.body.node).toBe("http://localhost:8080")
             });
     })
+
+    it("fails to create or update details for a legal officer", async () => {
+        const payload = { ...LEGAL_OFFICERS[0] }
+        const app = setupApp(LegalOfficerController, (container) => mockRepository(container, false))
+        await request(app)
+            .put("/api/legal-officer")
+            .send(payload)
+            .expect(401)
+            .expect('Content-Type', /application\/json/)
+    })
 })
 
-function mockRepository(container: Container) {
+function mockRepository(container: Container, authenticatedAddressIsLegalOfficer: boolean = true) {
     const repository = new Mock<LegalOfficerRepository>();
     container.bind(LegalOfficerRepository).toConstantValue(repository.object())
     const legalOfficer0 = mockLegalOfficer(repository, 0);
@@ -107,9 +117,14 @@ function mockRepository(container: Container) {
 
     const authorityService = new Mock<AuthorityService>()
     container.bind(AuthorityService).toConstantValue(authorityService.object())
-    authorityService.setup(instance => instance.isLegalOfficer(It.Is<string>(address => address === AUTHENTICATED_ADDRESS)))
-        .returns(Promise.resolve(true))
 
+    if (authenticatedAddressIsLegalOfficer) {
+        authorityService.setup(instance => instance.isLegalOfficer(It.Is<string>(address => address === AUTHENTICATED_ADDRESS)))
+            .returns(Promise.resolve(true))
+    } else {
+        authorityService.setup(instance => instance.isLegalOfficer(It.IsAny<string>()))
+            .returns(Promise.resolve(false))
+    }
 }
 
 function mockLegalOfficer(repository: Mock<LegalOfficerRepository>, idx:number):LegalOfficerAggregateRoot {
