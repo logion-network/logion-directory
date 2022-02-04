@@ -10,14 +10,17 @@ import { AuthorityService } from "../services/authority.service";
 import { HealthController } from "../controllers/health.controller";
 
 let container = new Container({ defaultScope: "Singleton" });
-container.bind(ApplicationErrorController).toSelf();
+
 container.bind(JsonResponse).toSelf();
-container.bind(LegalOfficerController).toSelf();
 container.bind(LegalOfficerRepository).toSelf();
 container.bind(LegalOfficerFactory).toSelf();
 container.bind(AuthenticationService).toSelf();
 container.bind(PolkadotService).toSelf();
 container.bind(AuthorityService).toSelf();
-container.bind(HealthController).toSelf();
+
+// Controllers are stateful so they must not be injected with singleton scope
+container.bind(ApplicationErrorController).toSelf().inTransientScope();
+container.bind(LegalOfficerController).toSelf().inTransientScope();
+container.bind(HealthController).toSelf().inTransientScope();
 
 export { container as AppContainer };
