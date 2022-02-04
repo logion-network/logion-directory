@@ -128,4 +128,14 @@ export class AuthenticationService {
     private _unauthorized(error: VerifyErrors): UnauthorizedException<{ error: string }> {
         return new UnauthorizedException({ error: error.name + ": " + error.message });
     }
+
+    ensureAuthorizationBearer(request: Request, expectedToken: string | undefined) {
+        if(expectedToken === undefined) {
+            throw new UnauthorizedException("No expected token");
+        }
+        const token = this.extractBearerToken(request);
+        if(token !== expectedToken) {
+            throw new UnauthorizedException("Unexpected Bearer token");
+        }
+    }
 }

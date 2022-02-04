@@ -7,6 +7,7 @@ import { LegalOfficerRepository, LegalOfficerFactory } from "../model/legaloffic
 import { AuthenticationService } from "../services/authentication.service";
 import { PolkadotService } from "../services/polkadot.service";
 import { AuthorityService } from "../services/authority.service";
+import { HealthController } from "../controllers/health.controller";
 
 let container = new Container({ defaultScope: "Singleton" });
 container.bind(ApplicationErrorController).toSelf();
@@ -17,5 +18,6 @@ container.bind(LegalOfficerFactory).toSelf();
 container.bind(AuthenticationService).toSelf();
 container.bind(PolkadotService).toSelf();
 container.bind(AuthorityService).toSelf();
+container.bind(HealthController).toSelf();
 
 export { container as AppContainer };
