@@ -8,13 +8,13 @@ describe("LegalOfficerFactory", () => {
     it("succeeds to create a LegalOfficerAggregateRoot", async () => {
 
         LEGAL_OFFICERS.forEach(legalOfficer => {
-            testNewLegalOfficer(legalOfficer.address, legalOfficer)
+            testNewLegalOfficer(legalOfficer)
         })
     })
 
-    function testNewLegalOfficer(address: string, legalOfficer: LegalOfficerDescription) {
-        let aggregate = factory.newLegalOfficer({ address, description: legalOfficer })
-        expect(aggregate.address).toBe(address)
+    function testNewLegalOfficer(legalOfficer: LegalOfficerDescription) {
+        let aggregate = factory.newLegalOfficer(legalOfficer)
+        expect(aggregate.address).toBe(legalOfficer.address)
         expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity)
         expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress)
         expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails)

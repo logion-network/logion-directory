@@ -1,8 +1,11 @@
-import jwt, { Jwt, VerifyErrors } from "jsonwebtoken";
+import jwt, { Algorithm, Jwt, VerifyErrors } from "jsonwebtoken";
 import { injectable } from "inversify";
 import { Request } from "express";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
+import { PolkadotService } from "./polkadot.service";
+
+const ALGORITHM: Algorithm = "HS384";
 
 export interface AuthenticatedUser {
     address: string,
@@ -109,7 +112,9 @@ export class AuthenticationService {
     private readonly issuer: string;
     private readonly ttl: number;
 
-    constructor() {
+    constructor(
+        private polkadotService: PolkadotService
+    ) {
         if (process.env.JWT_SECRET === undefined) {
             throw Error("No JWT secret set, please set var JWT_SECRET");
         }
@@ -137,5 +142,27 @@ export class AuthenticationService {
         if(token !== expectedToken) {
             throw new UnauthorizedException("Unexpected Bearer token");
         }
+    }
+
+    async createToken(address: string, issuedAt: Moment, expiresIn?: number): Promise<Token> {
+        const now = Math.floor(issuedAt.unix());
+        const expiredOn = now + (expiresIn !== undefined ? expiresIn : this.ttl);
+        const payload = {
+            iat: now,
+            legalOfficer: await this.isLegalOfficer(address),
+            exp: expiredOn
+        };
+        const encodedToken = jwt.sign(payload, this.secret, {
+            algorithm: ALGORITHM,
+            issuer: this.issuer,
+            subject: address
+        });
+        return { value: encodedToken, expiredOn: moment.unix(expiredOn) };
+    }
+
+    private async isLegalOfficer(address: string): Promise<boolean> {
+        const api = await this.polkadotService.readyApi();
+        const result = await api.query.loAuthorityList.legalOfficerSet(address);
+        return result.isSome && result.unwrap().isTrue;
     }
 }

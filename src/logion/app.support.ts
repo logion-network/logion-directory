@@ -10,6 +10,7 @@ import { JsonResponse } from "./middlewares/json.response";
 import { Container } from "inversify";
 import { AppContainer } from "./container/app.container";
 import { HealthController } from "./controllers/health.controller";
+import { AuthenticationController } from "./controllers/authentication.controller";
 
 export function predefinedSpec(spec: OpenAPIV3.Document): OpenAPIV3.Document {
     setOpenApi3(spec);
@@ -46,6 +47,7 @@ export function setupApp(app: Express) {
     dino.useRouter(() => express.Router());
     dino.registerController(LegalOfficerController);
     dino.registerController(HealthController);
+    dino.registerController(AuthenticationController);
     dino.registerApplicationError(ApplicationErrorController);
     dino.requestEnd(JsonResponse);
 
