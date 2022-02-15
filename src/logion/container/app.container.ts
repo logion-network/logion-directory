@@ -8,6 +8,9 @@ import { AuthenticationService } from "../services/authentication.service";
 import { PolkadotService } from "../services/polkadot.service";
 import { AuthorityService } from "../services/authority.service";
 import { HealthController } from "../controllers/health.controller";
+import { LegalOfficerDataMergeService } from '../services/legalofficerdatamerge.service';
+import { SessionFactory, SessionRepository } from '../model/session.model';
+import { SignatureService } from '../services/signature.service';
 
 let container = new Container({ defaultScope: "Singleton" });
 
@@ -17,6 +20,10 @@ container.bind(LegalOfficerFactory).toSelf();
 container.bind(AuthenticationService).toSelf();
 container.bind(PolkadotService).toSelf();
 container.bind(AuthorityService).toSelf();
+container.bind(LegalOfficerDataMergeService).toSelf();
+container.bind(SessionFactory).toSelf();
+container.bind(SessionRepository).toSelf();
+container.bind(SignatureService).toSelf();
 
 // Controllers are stateful so they must not be injected with singleton scope
 container.bind(ApplicationErrorController).toSelf().inTransientScope();

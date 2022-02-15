@@ -45,6 +45,7 @@ export class LegalOfficerAggregateRoot {
 
     getDescription(): LegalOfficerDescription {
         return {
+            address: this.address!,
             userIdentity: {
                 firstName: this.firstName || "",
                 lastName: this.lastName || "",
@@ -66,6 +67,7 @@ export class LegalOfficerAggregateRoot {
 }
 
 export interface LegalOfficerDescription {
+    readonly address: string;
     readonly userIdentity: UserIdentity
     readonly postalAddress: PostalAddress
     readonly additionalDetails: string
@@ -88,25 +90,20 @@ export interface PostalAddress {
     readonly country: string
 }
 
-export interface NewLegalOfficerParameters {
-    readonly address: string
-    readonly description: LegalOfficerDescription
-}
-
 @injectable()
 export class LegalOfficerFactory {
 
-    newLegalOfficer(param: NewLegalOfficerParameters): LegalOfficerAggregateRoot {
+    newLegalOfficer(description: LegalOfficerDescription): LegalOfficerAggregateRoot {
         const legalOfficer = new LegalOfficerAggregateRoot();
-        legalOfficer.address = param.address
+        legalOfficer.address = description.address
 
-        const userIdentity = param.description.userIdentity;
+        const userIdentity = description.userIdentity;
         legalOfficer.firstName = userIdentity.firstName;
         legalOfficer.lastName = userIdentity.lastName;
         legalOfficer.email = userIdentity.email;
         legalOfficer.phoneNumber = userIdentity.phoneNumber;
 
-        const postalAddress = param.description.postalAddress
+        const postalAddress = description.postalAddress
         legalOfficer.company = postalAddress.company;
         legalOfficer.line1 = postalAddress.line1;
         legalOfficer.line2 = postalAddress.line2;
@@ -114,8 +111,8 @@ export class LegalOfficerFactory {
         legalOfficer.city = postalAddress.city;
         legalOfficer.country = postalAddress.country;
 
-        legalOfficer.additionalDetails = param.description.additionalDetails
-        legalOfficer.node = param.description.node
+        legalOfficer.additionalDetails = description.additionalDetails
+        legalOfficer.node = description.node
         return legalOfficer;
     }
 }

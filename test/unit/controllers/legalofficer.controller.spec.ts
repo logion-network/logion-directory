@@ -6,13 +6,15 @@ import { Mock, It } from "moq.ts";
 import {
     LegalOfficerRepository,
     LegalOfficerAggregateRoot,
-    LegalOfficerFactory, NewLegalOfficerParameters
+    LegalOfficerFactory,
+    LegalOfficerDescription,
 } from "../../../src/logion/model/legalofficer.model";
 import { LEGAL_OFFICERS } from "../../testdata";
 import { AuthenticationService, LogionUserCheck } from "../../../src/logion/services/authentication.service";
 import { Request } from "express";
 import { Promise } from "mongoose";
 import { AuthorityService } from "../../../src/logion/services/authority.service";
+import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service";
 
 const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].address;
 
@@ -20,7 +22,7 @@ describe("LegalOfficerController", () => {
 
     it("should fetch all legal officers", async () => {
 
-        const app = setupApp(LegalOfficerController, mockRepository)
+        const app = setupApp(LegalOfficerController, mockDataMergeService)
         await request(app)
             .get("/api/legal-officer")
             .expect(200)
@@ -31,7 +33,7 @@ describe("LegalOfficerController", () => {
     });
 
     it("should fetch one legal officer", async () => {
-        const app = setupApp(LegalOfficerController, mockRepository)
+        const app = setupApp(LegalOfficerController, mockDataMergeService)
         await request(app)
             .get("/api/legal-officer/5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
             .expect(200)
@@ -91,6 +93,29 @@ describe("LegalOfficerController", () => {
     })
 })
 
+function mockDataMergeService(container: Container) {
+    const repository = new Mock<LegalOfficerRepository>();
+    container.bind(LegalOfficerRepository).toConstantValue(repository.object());
+
+    const dataMergeService = new Mock<LegalOfficerDataMergeService>();
+    container.bind(LegalOfficerDataMergeService).toConstantValue(dataMergeService.object());
+    dataMergeService.setup(instance => instance.getAllLegalOfficers())
+        .returns(Promise.resolve(LEGAL_OFFICERS))
+    dataMergeService.setup(instance => instance.getLegalOfficer)
+        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)))
+
+    const factory = new Mock<LegalOfficerFactory>();
+    container.bind(LegalOfficerFactory).toConstantValue(factory.object());
+
+    const authenticationService = new Mock<AuthenticationService>();
+    container.bind(AuthenticationService).toConstantValue(authenticationService.object());
+    authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
+        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS, legalOfficer:true}));
+
+    const authorityService = new Mock<AuthorityService>();
+    container.bind(AuthorityService).toConstantValue(authorityService.object());
+}
+
 function mockRepository(container: Container, authenticatedAddressIsLegalOfficer: boolean = true) {
     const repository = new Mock<LegalOfficerRepository>();
     container.bind(LegalOfficerRepository).toConstantValue(repository.object())
@@ -105,9 +130,12 @@ function mockRepository(container: Container, authenticatedAddressIsLegalOfficer
     repository.setup(instance => instance.save(It.IsAny<LegalOfficerAggregateRoot>()))
         .returns(Promise.resolve())
 
+    const dataMergeService = new Mock<LegalOfficerDataMergeService>();
+    container.bind(LegalOfficerDataMergeService).toConstantValue(dataMergeService.object());
+
     const factory = new Mock<LegalOfficerFactory>();
     container.bind(LegalOfficerFactory).toConstantValue(factory.object())
-    factory.setup(instance => instance.newLegalOfficer(It.IsAny<NewLegalOfficerParameters>()))
+    factory.setup(instance => instance.newLegalOfficer(It.IsAny<LegalOfficerDescription>()))
         .returns(legalOfficer0)
 
     const authenticationService = new Mock<AuthenticationService>()

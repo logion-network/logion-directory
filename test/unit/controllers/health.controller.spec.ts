@@ -5,6 +5,7 @@ import { Mock } from "moq.ts";
 import { HealthController } from '../../../src/logion/controllers/health.controller';
 import { AuthenticationService } from '../../../src/logion/services/authentication.service';
 import { LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model";
+import { PolkadotService } from 'src/logion/services/polkadot.service';
 
 describe('HealthController', () => {
 
@@ -63,7 +64,9 @@ const EXPECTED_TOKEN = "the-health-check-token";
 const UNEXPECTED_TOKEN = "wrong-health-check-token";
 
 function bindMocks(container: Container, up: boolean): void {
-    container.bind(AuthenticationService).toConstantValue(new AuthenticationService());
+    const polkadotService = new Mock<PolkadotService>();
+
+    container.bind(AuthenticationService).toConstantValue(new AuthenticationService(polkadotService.object()));
 
     const legalOfficerRepository = new Mock<LegalOfficerRepository>();
     if(up) {

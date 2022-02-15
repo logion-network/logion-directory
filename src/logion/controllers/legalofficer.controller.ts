@@ -5,7 +5,6 @@ import { Controller, ApiController, HttpGet, Async, HttpPut } from "dinoloop";
 import { components } from "./components";
 import {
     LegalOfficerRepository,
-    LegalOfficerAggregateRoot,
     LegalOfficerDescription,
     LegalOfficerFactory
 } from "../model/legalofficer.model";
@@ -13,6 +12,7 @@ import { AuthenticationService } from "../services/authentication.service";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
 import { requireDefined } from "../lib/assertions";
 import { AuthorityService } from "../services/authority.service";
+import { LegalOfficerDataMergeService } from "../services/legalofficerdatamerge.service";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';
@@ -40,6 +40,7 @@ export class LegalOfficerController extends ApiController {
         private legalOfficerFactory: LegalOfficerFactory,
         private authenticationService: AuthenticationService,
         private authorityService: AuthorityService,
+        private legalOfficerDataMergeService: LegalOfficerDataMergeService,
         ) {
         super();
     }
@@ -54,7 +55,7 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('')
     @Async()
     async fetchLegalOfficers(): Promise<FetchLegalOfficersView> {
-        const legalOfficers = await this.legalOfficerRepository.findAll();
+        const legalOfficers = await this.legalOfficerDataMergeService.getAllLegalOfficers();
         return { legalOfficers: legalOfficers.map(this.toView) }
     }
 
@@ -69,19 +70,15 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('/:address')
     @Async()
     async getLegalOfficer(address: string): Promise<LegalOfficerView> {
-        const legalOfficer = await this.legalOfficerRepository.findByAddress(address)
-        if (legalOfficer) {
-            return this.toView(legalOfficer)
-        }
-        throw new Error(`Unknown address: ${ address }`)
+        const legalOfficer = await this.legalOfficerDataMergeService.getLegalOfficer(address);
+        return this.toView(legalOfficer);
     }
 
-    private toView(legalOfficer: LegalOfficerAggregateRoot): LegalOfficerView {
-        const description = legalOfficer.getDescription();
+    private toView(description: LegalOfficerDescription): LegalOfficerView {
         const userIdentity = description.userIdentity;
         const postalAddress = description.postalAddress;
         return {
-            address: legalOfficer.address,
+            address: description.address,
             userIdentity: {
                 firstName: userIdentity.firstName,
                 lastName: userIdentity.lastName,
@@ -122,7 +119,8 @@ export class LegalOfficerController extends ApiController {
         }
         const userIdentity = requireDefined(createOrUpdate.userIdentity);
         const postalAddress = requireDefined(createOrUpdate.postalAddress);
-        const description:LegalOfficerDescription = {
+        const description: LegalOfficerDescription = {
+            address,
             userIdentity: {
                 firstName: requireDefined(userIdentity.firstName),
                 lastName: requireDefined(userIdentity.lastName),
@@ -140,8 +138,8 @@ export class LegalOfficerController extends ApiController {
             additionalDetails: createOrUpdate.additionalDetails || "",
             node: requireDefined(createOrUpdate.node)
         }
-        const legalOfficer = this.legalOfficerFactory.newLegalOfficer({ address, description });
+        const legalOfficer = this.legalOfficerFactory.newLegalOfficer(description);
         await this.legalOfficerRepository.save(legalOfficer)
-        return this.toView(legalOfficer);
+        return this.toView(description);
     }
 }

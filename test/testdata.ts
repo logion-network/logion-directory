@@ -1,6 +1,6 @@
 import { LegalOfficerDescription } from "../src/logion/model/legalofficer.model";
 
-export const LEGAL_OFFICERS: (LegalOfficerDescription & { address: string })[] = [
+export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
         address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
         userIdentity: {
