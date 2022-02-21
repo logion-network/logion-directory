@@ -27,6 +27,6 @@ createConnection()
 
         expressOasGenerator.handleRequests();
 
-        const port = process.env.PORT || 8081;
+        const port = process.env.PORT || 8090;
         app.listen(port, () => logger.info(`Server started on port ${ port }`));
     });

@@ -3,25 +3,26 @@ import { injectable } from "inversify";
 import { Request } from "express";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
 import moment, { Moment } from "moment";
-import { PolkadotService } from "./polkadot.service";
+import { AuthorityService } from "./authority.service";
 
 const ALGORITHM: Algorithm = "HS384";
 
 export interface AuthenticatedUser {
     address: string,
-    legalOfficer: boolean;
 }
 
 export class LogionUserCheck implements AuthenticatedUser {
     constructor(
         logionUser: AuthenticatedUser,
+        legalOfficerChecker: (address: string) => Promise<boolean>
     ) {
         this.address = logionUser.address;
-        this.legalOfficer = logionUser.legalOfficer;
+        this.legalOfficerChecker = legalOfficerChecker;
     }
 
-    requireLegalOfficer(): void {
-        this.require(user => user.legalOfficer, "Reserved to legal officer");
+    async requireLegalOfficer(): Promise<void> {
+        const legalOfficer = await this.legalOfficerChecker(this.address);
+        this.require(() => legalOfficer, "Reserved to legal officer");
     }
 
     requireIs(address: string | undefined | null): void {
@@ -46,7 +47,7 @@ export class LogionUserCheck implements AuthenticatedUser {
     }
 
     readonly address: string;
-    readonly legalOfficer: boolean;
+    private readonly legalOfficerChecker: (address: string) => Promise<boolean>
 }
 
 export interface Token {
@@ -58,18 +59,22 @@ export function unauthorized(error: string): UnauthorizedException<{ error: stri
     return new UnauthorizedException({ error: error });
 }
 
+async function isLegalOfficer(authorityService: AuthorityService, address: string): Promise<boolean> {
+    return authorityService.isLegalOfficer(address)
+}
+
 @injectable()
 export class AuthenticationService {
 
     authenticatedUser(request: Request): LogionUserCheck {
         const user = this.extractLogionUser(request);
-        return new LogionUserCheck(user);
+        return new LogionUserCheck(user, address => isLegalOfficer(this.authorityService, address));
     }
 
     authenticatedUserIs(request: Request, address: string | undefined | null): LogionUserCheck {
         const user = this.authenticatedUser(request);
         if (user.is(address)) {
-            return new LogionUserCheck(user);
+            return new LogionUserCheck(user, address => isLegalOfficer(this.authorityService, address));
         }
         throw unauthorized("User has not access to this resource");
     }
@@ -77,7 +82,7 @@ export class AuthenticationService {
     authenticatedUserIsOneOf(request: Request, ...addresses: (string | undefined | null)[]): LogionUserCheck {
         const user = this.authenticatedUser(request);
         if (user.isOneOf(addresses)) {
-            return new LogionUserCheck(user);
+            return new LogionUserCheck(user, address => isLegalOfficer(this.authorityService, address));
         }
         throw unauthorized("User has not access to this resource");
     }
@@ -93,7 +98,6 @@ export class AuthenticationService {
         if(typeof token.payload !== 'string') {
             return {
                 address: token.payload.sub!,
-                legalOfficer: token.payload.legalOfficer
             }
         } else {
             throw unauthorized("Unable to decode payload");
@@ -113,7 +117,7 @@ export class AuthenticationService {
     private readonly ttl: number;
 
     constructor(
-        private polkadotService: PolkadotService
+        public authorityService: AuthorityService,
     ) {
         if (process.env.JWT_SECRET === undefined) {
             throw Error("No JWT secret set, please set var JWT_SECRET");
@@ -149,7 +153,6 @@ export class AuthenticationService {
         const expiredOn = now + (expiresIn !== undefined ? expiresIn : this.ttl);
         const payload = {
             iat: now,
-            legalOfficer: await this.isLegalOfficer(address),
             exp: expiredOn
         };
         const encodedToken = jwt.sign(payload, this.secret, {
@@ -158,11 +161,5 @@ export class AuthenticationService {
             subject: address
         });
         return { value: encodedToken, expiredOn: moment.unix(expiredOn) };
-    }
-
-    private async isLegalOfficer(address: string): Promise<boolean> {
-        const api = await this.polkadotService.readyApi();
-        const result = await api.query.loAuthorityList.legalOfficerSet(address);
-        return result.isSome && result.unwrap().isTrue;
     }
 }
