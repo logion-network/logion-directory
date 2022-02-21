@@ -110,7 +110,7 @@ function mockDataMergeService(container: Container) {
     const authenticationService = new Mock<AuthenticationService>();
     container.bind(AuthenticationService).toConstantValue(authenticationService.object());
     authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS, legalOfficer:true}));
+        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resove(LEGAL_OFFICERS.find(description => description.address === address)))));
 
     const authorityService = new Mock<AuthorityService>();
     container.bind(AuthorityService).toConstantValue(authorityService.object());
@@ -141,7 +141,7 @@ function mockRepository(container: Container, authenticatedAddressIsLegalOfficer
     const authenticationService = new Mock<AuthenticationService>()
     container.bind(AuthenticationService).toConstantValue(authenticationService.object())
     authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS, legalOfficer:true}))
+        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resove(LEGAL_OFFICERS.find(description => description.address === address)))))
 
     const authorityService = new Mock<AuthorityService>()
     container.bind(AuthorityService).toConstantValue(authorityService.object())
