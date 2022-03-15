@@ -21,8 +21,9 @@ export class PolkadotService {
 
     private async _createApi(): Promise<ApiPromise> {
         const wsProviderUrl = process.env.WS_PROVIDER_URL || 'ws://localhost:9944';
-        logger.info("Connecting to node %s", wsProviderUrl);
-        const wsProvider = new WsProvider(wsProviderUrl);
+        logger.info("Connecting to edge node(s) %s", wsProviderUrl);
+        const sockets = wsProviderUrl.split(",")
+        const wsProvider = new WsProvider(sockets);
         const types = Object.values(definitions).reduce((res, { types }): object => ({ ...res, ...types }), {});
         return await ApiPromise.create({
             provider: wsProvider,
