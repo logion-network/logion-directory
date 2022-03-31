@@ -1,12 +1,12 @@
 # Build directory
-FROM node:14 AS build-directory
+FROM node:16 AS build-directory
 WORKDIR /tmp/logion-directory
 COPY . .
 RUN yarn install
 RUN yarn build
 
 # Directory image
-FROM node:14
+FROM node:16
 
 WORKDIR /usr/share/logion-directory
 COPY --from=build-directory /tmp/logion-directory/dist dist
@@ -16,8 +16,8 @@ COPY --from=build-directory /tmp/logion-directory/resources resources
 ENV NODE_ENV=production
 ENV WS_PROVIDER_URL=ws://localhost:9944
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-ENV JWT_SECRET=Y2hhbmdlLW1lLXBsZWFzZQ==
-ENV JWT_ISSUER=localhost
+ENV JWT_SECRET=1c482e5368b84abe08e1a27d0670d303351989b3aa281cb1abfc2f48e4530b57
+ENV JWT_ISSUER=12D3KooWDCuGU7WY3VaWjBS1E44x4EnmTgK3HRxWFqYG3dqXDfP1
 ENV JWT_TTL_SEC=3600
 ENV PORT=8080
 ENV TYPEORM_CONNECTION=postgres

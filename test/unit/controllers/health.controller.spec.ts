@@ -6,6 +6,7 @@ import { HealthController } from '../../../src/logion/controllers/health.control
 import { AuthenticationService } from '../../../src/logion/services/authentication.service';
 import { LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model";
 import { AuthorityService } from "../../../src/logion/services/authority.service";
+import { NodeAuthorizationService } from "../../../src/logion/services/nodeauthorization.service";
 
 describe('HealthController', () => {
 
@@ -65,8 +66,10 @@ const UNEXPECTED_TOKEN = "wrong-health-check-token";
 
 function bindMocks(container: Container, up: boolean): void {
     const authorityService = new Mock<AuthorityService>();
+    const nodeAuthorizationService = new Mock<NodeAuthorizationService>();
 
-    container.bind(AuthenticationService).toConstantValue(new AuthenticationService(authorityService.object()));
+    container.bind(AuthenticationService).toConstantValue(
+        new AuthenticationService(authorityService.object(), nodeAuthorizationService.object()));
 
     const legalOfficerRepository = new Mock<LegalOfficerRepository>();
     if(up) {
