@@ -12,7 +12,6 @@ import {
 import { LEGAL_OFFICERS } from "../../testdata";
 import { AuthenticationService, LogionUserCheck } from "../../../src/logion/services/authentication.service";
 import { Request } from "express";
-import { Promise } from "mongoose";
 import { AuthorityService } from "../../../src/logion/services/authority.service";
 import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service";
 
@@ -102,7 +101,7 @@ function mockDataMergeService(container: Container) {
     dataMergeService.setup(instance => instance.getAllLegalOfficers())
         .returns(Promise.resolve(LEGAL_OFFICERS))
     dataMergeService.setup(instance => instance.getLegalOfficer)
-        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)))
+        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)!))
 
     const factory = new Mock<LegalOfficerFactory>();
     container.bind(LegalOfficerFactory).toConstantValue(factory.object());
@@ -110,7 +109,7 @@ function mockDataMergeService(container: Container) {
     const authenticationService = new Mock<AuthenticationService>();
     container.bind(AuthenticationService).toConstantValue(authenticationService.object());
     authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resove(LEGAL_OFFICERS.find(description => description.address === address)))));
+        .returns(Promise.resolve(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address) !== undefined)))));
 
     const authorityService = new Mock<AuthorityService>();
     container.bind(AuthorityService).toConstantValue(authorityService.object());
@@ -141,7 +140,7 @@ function mockRepository(container: Container, authenticatedAddressIsLegalOfficer
     const authenticationService = new Mock<AuthenticationService>()
     container.bind(AuthenticationService).toConstantValue(authenticationService.object())
     authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resove(LEGAL_OFFICERS.find(description => description.address === address)))))
+        .returns(Promise.resolve(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address) !== undefined)))))
 
     const authorityService = new Mock<AuthorityService>()
     container.bind(AuthorityService).toConstantValue(authorityService.object())
