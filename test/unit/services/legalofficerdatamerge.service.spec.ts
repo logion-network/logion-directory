@@ -104,7 +104,8 @@ PARTIAL_DESCRIPTION_SET.push({
         country: "",
     },
     additionalDetails: "",
-    node: ""
+    node: "",
+    logoUrl: "",
 });
 
 const PARTIAL_DB_SET: LegalOfficerAggregateRoot[] = LEGAL_OFFICERS.slice(1).map(mockAggregate);

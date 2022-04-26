@@ -94,7 +94,8 @@ export class LegalOfficerController extends ApiController {
                 country: postalAddress.country,
             },
             additionalDetails: description.additionalDetails,
-            node: description.node
+            node: description.node,
+            logoUrl: description.logoUrl,
         }
     }
 
@@ -136,7 +137,8 @@ export class LegalOfficerController extends ApiController {
                 country: requireDefined(postalAddress.country),
             },
             additionalDetails: createOrUpdate.additionalDetails || "",
-            node: requireDefined(createOrUpdate.node)
+            node: requireDefined(createOrUpdate.node),
+            logoUrl: createOrUpdate.logoUrl || "",
         }
         const legalOfficer = this.legalOfficerFactory.newLegalOfficer(description);
         await this.legalOfficerRepository.save(legalOfficer)

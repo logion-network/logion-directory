@@ -15,3 +15,11 @@ Logion legal officers directory
 4. Populate the DB with legal officers (using well-known polkadot account) : [`legal_officers.sql`](test/integration/model/legal_officers.sql)
 5. Start the server: `yarn start`
 
+## Change DB schema
+
+1. Adapt the model with the proper annotations.
+2. Choose a name for the migration, for instance `MyMigration` 
+3. Run `yarn typeorm migration:generate -n MyMigration` - this will generate a new migration `TIMESTAMP-MyMigration.ts` under [migration](/src/logion/migration).
+4. (Optional) Fix the generated file.
+5. Apply the migration(s): `yarn typeorm migration:run`
+6. (Optional) Revert the last migration: `yarn typeorm migration:revert`
