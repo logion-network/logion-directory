@@ -44,6 +44,11 @@
             "type": "string",
             "description": "The node info",
             "example": "https://node01.logion.network"
+          },
+          "logoUrl": {
+            "type": "string",
+            "description": "The URL to a custom logo",
+            "example": "https://www.logion.network/logo.png"
           }
         }
       },
@@ -66,6 +71,11 @@
             "type": "string",
             "description": "The node info",
             "example": "https://node01.logion.network"
+          },
+          "logoUrl": {
+            "type": "string",
+            "description": "The URL to a custom logo",
+            "example": "https://www.logion.network/logo.png"
           }
         }
       },

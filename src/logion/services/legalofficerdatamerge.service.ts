@@ -51,7 +51,8 @@ export class LegalOfficerDataMergeService {
                 country: "",
             },
             additionalDetails: "",
-            node: ""
+            node: "",
+            logoUrl: "",
         };
     }
 
