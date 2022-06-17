@@ -1,7 +1,8 @@
-import { PolkadotService } from "./polkadot.service";
+import { PeerId } from "@logion/node-api/dist/interfaces/default";
 import { injectable } from "inversify";
-import { PeerId } from "logion-api/dist/interfaces";
 import { createFromB58String } from "peer-id";
+
+import { PolkadotService } from "./polkadot.service";
 
 @injectable()
 export class NodeAuthorizationService {
