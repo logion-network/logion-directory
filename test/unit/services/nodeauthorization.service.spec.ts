@@ -1,9 +1,10 @@
+import { PeerId } from "@logion/node-api/dist/interfaces/default";
+import { ApiPromise } from '@polkadot/api';
+import { Mock } from "moq.ts";
+import { createFromB58String } from "peer-id";
+
 import { NodeAuthorizationService } from "../../../src/logion/services/nodeauthorization.service";
 import { PolkadotService } from "../../../src/logion/services/polkadot.service";
-import { Mock } from "moq.ts";
-import { ApiPromise } from "@polkadot/api";
-import { PeerId } from "logion-api/dist/interfaces";
-import { createFromB58String } from "peer-id";
 
 const WELL_KNOWN_NODES: string[] = ["12D3KooWBmAwcd4PJNJvfV89HwE48nwkRmAgo8Vy3uQEyNNHBox2", "12D3KooWQYV9dGMFoRzNStwpXztXaBUjtPqi6aU76ZgUriHhKust"]
 

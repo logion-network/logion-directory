@@ -1,9 +1,6 @@
 import { injectable } from 'inversify';
 import { ApiPromise } from '@polkadot/api';
-import { Log } from "../util/Log";
-import { buildApi } from "logion-api/dist/Connection";
-
-const { logger } = Log;
+import { buildApi } from "@logion/node-api";
 
 @injectable()
 export class PolkadotService {
