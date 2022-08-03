@@ -2,7 +2,7 @@
 FROM node:16 AS build-directory
 WORKDIR /tmp/logion-directory
 COPY . .
-RUN yarn install
+RUN yarn install --immutable
 RUN yarn build
 
 # Directory image
