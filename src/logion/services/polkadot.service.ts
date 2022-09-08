@@ -1,3 +1,4 @@
+import "@logion/node-api/dist/interfaces/types-lookup";
 import { injectable } from 'inversify';
 import { ApiPromise } from '@polkadot/api';
 import { buildApi } from "@logion/node-api";
