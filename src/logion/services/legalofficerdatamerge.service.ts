@@ -20,7 +20,7 @@ export class LegalOfficerDataMergeService {
 
         const fullList: LegalOfficerDescription[] = [];
         for(let i = 0; i < chainLegalOfficers.length; ++i) {
-            if(chainLegalOfficers[i][1].isSome && chainLegalOfficers[i][1].unwrap().isTrue) {
+            if(chainLegalOfficers[i][1].isSome) {
                 const address = (chainLegalOfficers[i][0].toHuman() as string[])[0];
                 if(address in dbLegalOfficersMap) {
                     fullList.push(dbLegalOfficersMap[address]);
@@ -59,7 +59,7 @@ export class LegalOfficerDataMergeService {
     async getLegalOfficer(address: string): Promise<LegalOfficerDescription> {
         const api = await this.polkadotService.readyApi();
         const chainLegalOfficer = await api.query.loAuthorityList.legalOfficerSet(address);
-        if(chainLegalOfficer.isSome && chainLegalOfficer.unwrap().isTrue) {
+        if(chainLegalOfficer.isSome) {
             const dbLegalOfficer = await this.legalOfficerRepository.findByAddress(address);
             if(dbLegalOfficer) {
                 return dbLegalOfficer.getDescription();
