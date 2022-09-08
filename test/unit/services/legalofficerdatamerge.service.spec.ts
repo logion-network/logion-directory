@@ -1,6 +1,7 @@
+import { PalletLoAuthorityListLegalOfficerData } from "@polkadot/types/lookup";
 import { Mock } from 'moq.ts';
 import type { ApiPromise } from '@polkadot/api';
-import type { StorageKey, Option, bool } from '@polkadot/types';
+import type { StorageKey, Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { PolkadotService } from '../../../src/logion/services/polkadot.service';
@@ -23,9 +24,16 @@ describe("LegalOfficerDataMergeService", () => {
         await whenGettingAll();
         thenResultMatches(PARTIAL_DESCRIPTION_SET);
     })
+
+    it("merges data from chain and DB with base URL set on-chain", async () => {
+        givenChainLegalOfficers(FULL_CHAIN_SET_WITH_BASE_URL);
+        givenDbLegalOfficers(FULL_DB_SET);
+        await whenGettingAll();
+        thenResultMatches(FULL_DESCRIPTION_SET_WITH_BASE_URL);
+    })
 })
 
-type LegalOfficersSet = [StorageKey<[AccountId]>, Option<bool>][];
+type LegalOfficersSet = [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>][];
 
 function givenChainLegalOfficers(set: LegalOfficersSet) {
     polkadotService = new Mock<PolkadotService>();
@@ -45,18 +53,33 @@ let polkadotService: Mock<PolkadotService>;
 
 const FULL_DESCRIPTION_SET: LegalOfficerDescription[] = LEGAL_OFFICERS;
 
-const FULL_CHAIN_SET: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockChainEntry);
+const FULL_CHAIN_SET: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockChainEntryWithoutBaseUrl);
 
-function mockChainEntry(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<bool>] {
+const FULL_CHAIN_SET_WITH_BASE_URL: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockChainEntryWithBaseUrl);
+
+const FULL_DESCRIPTION_SET_WITH_BASE_URL: LegalOfficerDescription[] = LEGAL_OFFICERS.map(description => ({
+    ...description,
+    node: description.node.replace("localhost", "logion.network"),
+}));
+
+function mockChainEntryWithoutBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
+    return mockChainEntry(description, false);
+}
+
+function mockChainEntry(description: LegalOfficerDescription, withBaseUrl: boolean): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
     return [
         {
             toHuman: () => [ description.address ]
         } as StorageKey<[AccountId]>,
         {
             isSome: true,
-            unwrap: () => ({ isTrue: true })
-        } as Option<bool>
+            unwrap: () => ({ baseUrl: { isSome: withBaseUrl, unwrap: () => ({ toUtf8: () => description.node.replace("localhost", "logion.network") }) }, nodeId: { isSome: false } })
+        } as Option<PalletLoAuthorityListLegalOfficerData>
     ];
+}
+
+function mockChainEntryWithBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
+    return mockChainEntry(description, true);
 }
 
 function givenDbLegalOfficers(set: LegalOfficerAggregateRoot[]) {
@@ -70,6 +93,7 @@ const FULL_DB_SET: LegalOfficerAggregateRoot[] = FULL_DESCRIPTION_SET.map(mockAg
 
 function mockAggregate(description: LegalOfficerDescription): LegalOfficerAggregateRoot {
     const root = new Mock<LegalOfficerAggregateRoot>();
+    root.setup(instance => instance.address).returns(description.address);
     root.setup(instance => instance.getDescription()).returns(description);
     return root.object();
 }

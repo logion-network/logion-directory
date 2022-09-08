@@ -1,5 +1,7 @@
+import "@logion/node-api/dist/interfaces/types-lookup";
+import { PalletLoAuthorityListLegalOfficerData } from "@polkadot/types/lookup";
 import { injectable } from 'inversify';
-import { LegalOfficerDescription, LegalOfficerRepository } from "../model/legalofficer.model";
+import { LegalOfficerAggregateRoot, LegalOfficerDescription, LegalOfficerRepository } from "../model/legalofficer.model";
 import { PolkadotService } from './polkadot.service';
 
 @injectable()
@@ -12,25 +14,54 @@ export class LegalOfficerDataMergeService {
 
     async getAllLegalOfficers(): Promise<LegalOfficerDescription[]> {
         const dbLegalOfficers = await this.legalOfficerRepository.findAll();
-        const dbLegalOfficersMap: Record<string, LegalOfficerDescription> = {};
-        dbLegalOfficers.map(root => root.getDescription()).forEach(description => dbLegalOfficersMap[description.address] = description);
+        const dbLegalOfficersMap: Record<string, LegalOfficerAggregateRoot> = {};
+        dbLegalOfficers.forEach(description => dbLegalOfficersMap[description.address!] = description);
 
         const api = await this.polkadotService.readyApi();
+        const chainLegalOfficersMap: Record<string, PalletLoAuthorityListLegalOfficerData> = {};
         const chainLegalOfficers = await api.query.loAuthorityList.legalOfficerSet.entries();
+        chainLegalOfficers.forEach(entry => {
+            const address = (entry[0].toHuman() as string[])[0];
+            const data = entry[1];
+            if(data.isSome) {
+                chainLegalOfficersMap[address] = data.unwrap();
+            }
+        });
 
         const fullList: LegalOfficerDescription[] = [];
-        for(let i = 0; i < chainLegalOfficers.length; ++i) {
-            if(chainLegalOfficers[i][1].isSome) {
-                const address = (chainLegalOfficers[i][0].toHuman() as string[])[0];
-                if(address in dbLegalOfficersMap) {
-                    fullList.push(dbLegalOfficersMap[address]);
-                } else {
-                    fullList.push(this.emptyLegalOfficer(address));
-                }
-            }
+        for(const address of Object.keys(chainLegalOfficersMap)) {
+            fullList.push(this.mergeDbChainData({
+                address,
+                chainData: chainLegalOfficersMap[address],
+                dbData: dbLegalOfficersMap[address],
+            }));
         }
+
         fullList.sort((lo1, lo2) => lo1.userIdentity.lastName.localeCompare(lo2.userIdentity.lastName));
         return fullList;
+    }
+
+    private mergeDbChainData(args: {
+        address: string,
+        dbData: LegalOfficerAggregateRoot | undefined,
+        chainData: PalletLoAuthorityListLegalOfficerData | undefined
+    }): LegalOfficerDescription {
+        const { address, dbData, chainData } = args;
+        let description: LegalOfficerDescription;
+        if(dbData) {
+            description = dbData.getDescription();
+        } else {
+            description = this.emptyLegalOfficer(address);
+        }
+
+        if(chainData && chainData.baseUrl.isSome) {
+            description = {
+                ...description,
+                node: chainData.baseUrl.unwrap().toUtf8(),
+            }
+        }
+
+        return description;
     }
 
     private emptyLegalOfficer(address: string): LegalOfficerDescription {
@@ -61,11 +92,11 @@ export class LegalOfficerDataMergeService {
         const chainLegalOfficer = await api.query.loAuthorityList.legalOfficerSet(address);
         if(chainLegalOfficer.isSome) {
             const dbLegalOfficer = await this.legalOfficerRepository.findByAddress(address);
-            if(dbLegalOfficer) {
-                return dbLegalOfficer.getDescription();
-            } else {
-                return this.emptyLegalOfficer(address);
-            }
+            return this.mergeDbChainData({
+                address,
+                chainData: chainLegalOfficer.unwrap(),
+                dbData: dbLegalOfficer,
+            })
         } else {
             throw new Error("No legal officer with given address");
         }
