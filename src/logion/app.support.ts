@@ -7,7 +7,6 @@ import cors from "cors";
 import { Dino } from "dinoloop";
 import { Container } from "inversify";
 import { AppContainer } from "./container/app.container";
-import { HealthController } from "./controllers/health.controller";
 
 export function predefinedSpec(spec: OpenAPIV3.Document): OpenAPIV3.Document {
     setOpenApi3(spec);
@@ -46,7 +45,6 @@ export function setupApp(app: Express) {
     configureDinoloop(dino);
 
     dino.registerController(LegalOfficerController);
-    dino.registerController(HealthController);
 
     dino.dependencyResolver<Container>(AppContainer,
         (injector, type) => {

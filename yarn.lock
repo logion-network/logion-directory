@@ -485,9 +485,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@logion/rest-api-core@npm:^0.1.0-4":
-  version: 0.1.0-4
-  resolution: "@logion/rest-api-core@npm:0.1.0-4"
+"@logion/rest-api-core@npm:^0.1.0-5":
+  version: 0.1.0-5
+  resolution: "@logion/rest-api-core@npm:0.1.0-5"
   dependencies:
     "@logion/authenticator": ^0.1.0-3
     dinoloop: ^2.4.0
@@ -500,7 +500,7 @@ __metadata:
     openapi-typescript: 5.1.0
     swagger-ui-express: ^4.5.0
     typeorm: ^0.3.9
-  checksum: aac192988d17e9a074b09b449f4561682b0ccc62f9fc6f228a56159423339785410dddae9c782c12f5bbbecd4fe595ad1ed79f03f524c29696a557f03ed904b5
+  checksum: f8a85800ca5dfa06cd36753662ee7322f73ed68be763a00f8c41cebe360627639ac0586e4584d6aabc34200ed93ef6cb00dd2e9b2928d76f7e12f28815d4bab1
   languageName: node
   linkType: hard
 
@@ -3528,7 +3528,7 @@ __metadata:
   resolution: "logion-directory@workspace:."
   dependencies:
     "@istanbuljs/nyc-config-typescript": ^1.0.2
-    "@logion/rest-api-core": ^0.1.0-4
+    "@logion/rest-api-core": ^0.1.0-5
     "@tsconfig/node16": ^1.0.3
     "@types/cors": ^2.8.12
     "@types/express": ^4.17.13
