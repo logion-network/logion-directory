@@ -1,8 +1,9 @@
 import "@logion/node-api/dist/interfaces/types-lookup";
+import { PolkadotService } from '@logion/rest-api-core';
 import { PalletLoAuthorityListLegalOfficerData } from "@polkadot/types/lookup";
 import { injectable } from 'inversify';
+
 import { LegalOfficerAggregateRoot, LegalOfficerDescription, LegalOfficerRepository } from "../model/legalofficer.model";
-import { PolkadotService } from './polkadot.service';
 
 @injectable()
 export class LegalOfficerDataMergeService {
@@ -43,8 +44,8 @@ export class LegalOfficerDataMergeService {
 
     private mergeDbChainData(args: {
         address: string,
-        dbData: LegalOfficerAggregateRoot | undefined,
-        chainData: PalletLoAuthorityListLegalOfficerData | undefined
+        dbData: LegalOfficerAggregateRoot | null,
+        chainData: PalletLoAuthorityListLegalOfficerData,
     }): LegalOfficerDescription {
         const { address, dbData, chainData } = args;
         let description: LegalOfficerDescription;

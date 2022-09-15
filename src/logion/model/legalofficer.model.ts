@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn, getRepository, Repository } from "typeorm";
+import { appDataSource } from "@logion/rest-api-core";
+import { Entity, Column, PrimaryColumn, Repository } from "typeorm";
 import { injectable } from "inversify";
 
 @Entity("legal_officer")
@@ -128,13 +129,13 @@ export class LegalOfficerFactory {
 export class LegalOfficerRepository {
 
     constructor() {
-        this.repository = getRepository(LegalOfficerAggregateRoot);
+        this.repository = appDataSource.getRepository(LegalOfficerAggregateRoot);
     }
 
     readonly repository: Repository<LegalOfficerAggregateRoot>
 
-    public findByAddress(address: string): Promise<LegalOfficerAggregateRoot | undefined> {
-        return this.repository.findOne(address);
+    public findByAddress(address: string): Promise<LegalOfficerAggregateRoot | null> {
+        return this.repository.findOneBy({ address });
     }
 
     public findAll(): Promise<LegalOfficerAggregateRoot []> {

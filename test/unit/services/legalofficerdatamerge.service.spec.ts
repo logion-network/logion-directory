@@ -1,10 +1,10 @@
+import { PolkadotService } from "@logion/rest-api-core";
 import { PalletLoAuthorityListLegalOfficerData } from "@polkadot/types/lookup";
-import { Mock } from 'moq.ts';
 import type { ApiPromise } from '@polkadot/api';
 import type { StorageKey, Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
+import { Mock } from 'moq.ts';
 
-import { PolkadotService } from '../../../src/logion/services/polkadot.service';
 import { LegalOfficerAggregateRoot, LegalOfficerDescription, LegalOfficerRepository } from '../../../src/logion/model/legalofficer.model';
 import { LegalOfficerDataMergeService } from '../../../src/logion/services/legalofficerdatamerge.service';
 import { LEGAL_OFFICERS } from '../../../test/testdata';

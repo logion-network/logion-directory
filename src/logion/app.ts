@@ -1,15 +1,14 @@
-// tslint:disable-next-line: no-require-imports no-var-requires
-import express, { Express } from 'express';
+import { appDataSource, Log } from "@logion/rest-api-core";
+import express from 'express';
 import expressOasGenerator, { SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
-import { Log } from "./util/Log";
+
 import { setupApp, predefinedSpec } from "./app.support";
-import { createConnection } from "typeorm";
 
 const { logger } = Log;
 
 require('source-map-support').install();
 
-const app:Express = express();
+const app = express();
 
 expressOasGenerator.handleResponses(app, {
     predefinedSpec,
@@ -20,8 +19,8 @@ expressOasGenerator.handleResponses(app, {
     alwaysServeDocs: true,
 });
 
-createConnection()
-    .then(_ => {
+appDataSource.initialize()
+    .then(() => {
 
         setupApp(app)
 

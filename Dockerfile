@@ -29,11 +29,12 @@ ENV TYPEORM_PORT=5432
 ENV TYPEORM_SYNCHRONIZE=false
 ENV TYPEORM_ENTITIES=dist/model/*.model.js
 ENV TYPEORM_MIGRATIONS=dist/migration/*.js
+ENV OWNER=
 
 COPY ./docker /usr/docker
 RUN chmod +x /usr/docker/*
 
 ENTRYPOINT ["/usr/docker/docker-entrypoint.sh"]
 
-CMD node ./node_modules/typeorm/cli.js migration:run && node ./dist/app.js
+CMD node ./node_modules/typeorm/cli.js -d ./dist/app-datasource.js migration:run && node ./dist/app.js
 EXPOSE ${PORT}

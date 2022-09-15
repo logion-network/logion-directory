@@ -1,8 +1,9 @@
-import { setupApp } from "../../helpers/testapp";
-import { LegalOfficerController } from "../../../src/logion/controllers/legalofficer.controller";
+import { TestApp } from "@logion/rest-api-core";
 import request from "supertest";
 import { Container } from "inversify";
 import { Mock, It } from "moq.ts";
+
+import { LegalOfficerController } from "../../../src/logion/controllers/legalofficer.controller";
 import {
     LegalOfficerRepository,
     LegalOfficerAggregateRoot,
@@ -10,12 +11,10 @@ import {
     LegalOfficerDescription,
 } from "../../../src/logion/model/legalofficer.model";
 import { LEGAL_OFFICERS } from "../../testdata";
-import { AuthenticationService, LogionUserCheck } from "../../../src/logion/services/authentication.service";
-import { Request } from "express";
-import { AuthorityService } from "../../../src/logion/services/authority.service";
 import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service";
 
 const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].address;
+const { setupApp, mockAuthenticationForUserOrLegalOfficer } = TestApp;
 
 describe("LegalOfficerController", () => {
 
@@ -57,7 +56,7 @@ describe("LegalOfficerController", () => {
 
     it("creates or updates details for a legal officer", async () => {
         const payload = { ...LEGAL_OFFICERS[0] }
-        const app = setupApp(LegalOfficerController, mockRepository)
+        const app = setupApp(LegalOfficerController, mockRepository, mockAuthenticationForUserOrLegalOfficer(true, AUTHENTICATED_ADDRESS))
         await request(app)
             .put("/api/legal-officer")
             .send(payload)
@@ -83,7 +82,7 @@ describe("LegalOfficerController", () => {
 
     it("fails to create or update details for a legal officer", async () => {
         const payload = { ...LEGAL_OFFICERS[0] }
-        const app = setupApp(LegalOfficerController, (container) => mockRepository(container, false))
+        const app = setupApp(LegalOfficerController, mockRepository, mockAuthenticationForUserOrLegalOfficer(false))
         await request(app)
             .put("/api/legal-officer")
             .send(payload)
@@ -105,17 +104,9 @@ function mockDataMergeService(container: Container) {
 
     const factory = new Mock<LegalOfficerFactory>();
     container.bind(LegalOfficerFactory).toConstantValue(factory.object());
-
-    const authenticationService = new Mock<AuthenticationService>();
-    container.bind(AuthenticationService).toConstantValue(authenticationService.object());
-    authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(Promise.resolve(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address) !== undefined)))));
-
-    const authorityService = new Mock<AuthorityService>();
-    container.bind(AuthorityService).toConstantValue(authorityService.object());
 }
 
-function mockRepository(container: Container, authenticatedAddressIsLegalOfficer: boolean = true) {
+function mockRepository(container: Container) {
     const repository = new Mock<LegalOfficerRepository>();
     container.bind(LegalOfficerRepository).toConstantValue(repository.object())
     const legalOfficer0 = mockLegalOfficer(repository, 0);
@@ -136,22 +127,6 @@ function mockRepository(container: Container, authenticatedAddressIsLegalOfficer
     container.bind(LegalOfficerFactory).toConstantValue(factory.object())
     factory.setup(instance => instance.newLegalOfficer(It.IsAny<LegalOfficerDescription>()))
         .returns(legalOfficer0)
-
-    const authenticationService = new Mock<AuthenticationService>()
-    container.bind(AuthenticationService).toConstantValue(authenticationService.object())
-    authenticationService.setup(instance => instance.authenticatedUser(It.IsAny<Request>()))
-        .returns(Promise.resolve(new LogionUserCheck({address: AUTHENTICATED_ADDRESS}, (address => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address) !== undefined)))))
-
-    const authorityService = new Mock<AuthorityService>()
-    container.bind(AuthorityService).toConstantValue(authorityService.object())
-
-    if (authenticatedAddressIsLegalOfficer) {
-        authorityService.setup(instance => instance.isLegalOfficer(It.Is<string>(address => address === AUTHENTICATED_ADDRESS)))
-            .returns(Promise.resolve(true))
-    } else {
-        authorityService.setup(instance => instance.isLegalOfficer(It.IsAny<string>()))
-            .returns(Promise.resolve(false))
-    }
 }
 
 function mockLegalOfficer(repository: Mock<LegalOfficerRepository>, idx:number):LegalOfficerAggregateRoot {

@@ -1,5 +1,7 @@
-import { connect, executeScript, disconnect } from "../../helpers/testdb";
+import { TestDb } from "@logion/rest-api-core";
 import { LegalOfficerAggregateRoot, LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model";
+
+const { connect, executeScript, disconnect } = TestDb;
 
 describe("LegalOfficerRepository", () => {
 
