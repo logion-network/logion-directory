@@ -1,17 +1,15 @@
+import { addTag, setControllerTag, getDefaultResponses, setPathParameters, getRequestBody, AuthenticationService, requireDefined } from "@logion/rest-api-core";
 import { OpenAPIV3 } from "openapi-types";
 import { injectable } from "inversify";
-import { addTag, setControllerTag, getDefaultResponses, addPathParameter, getRequestBody } from "./doc";
 import { Controller, ApiController, HttpGet, Async, HttpPut } from "dinoloop";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
+
 import { components } from "./components";
 import {
     LegalOfficerRepository,
     LegalOfficerDescription,
     LegalOfficerFactory
 } from "../model/legalofficer.model";
-import { AuthenticationService } from "../services/authentication.service";
-import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
-import { requireDefined } from "../lib/assertions";
-import { AuthorityService } from "../services/authority.service";
 import { LegalOfficerDataMergeService } from "../services/legalofficerdatamerge.service";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
@@ -39,7 +37,6 @@ export class LegalOfficerController extends ApiController {
         private legalOfficerRepository: LegalOfficerRepository,
         private legalOfficerFactory: LegalOfficerFactory,
         private authenticationService: AuthenticationService,
-        private authorityService: AuthorityService,
         private legalOfficerDataMergeService: LegalOfficerDataMergeService,
         ) {
         super();
@@ -64,7 +61,9 @@ export class LegalOfficerController extends ApiController {
         operationObject.summary = "Gets the details of one legal officer";
         operationObject.description = "No authentication required.";
         operationObject.responses = getDefaultResponses("LegalOfficerView");
-        addPathParameter(operationObject, 'address', "The Polkadot address of the expected Legal Officer")
+        setPathParameters(operationObject, {
+            address: "The Polkadot address of the expected Legal Officer"
+        })
     }
 
     @HttpGet('/:address')
@@ -108,14 +107,17 @@ export class LegalOfficerController extends ApiController {
             view: "CreateOrUpdateLegalOfficerView"
         })
         operationObject.responses = getDefaultResponses("LegalOfficerView");
-        addPathParameter(operationObject, 'address', "The Polkadot address of the expected Legal Officer")
+        setPathParameters(operationObject, {
+            address: "The Polkadot address of the expected Legal Officer"
+        })
     }
 
     @HttpPut('')
     @Async()
     async createOrUpdateLegalOfficer(createOrUpdate: CreateOrUpdateLegalOfficerView): Promise<LegalOfficerView> {
-        const address = (await this.authenticationService.authenticatedUser(this.request)).address;
-        if (!await this.authorityService.isLegalOfficer(address)) {
+        const authenticatedUser = await this.authenticationService.authenticatedUser(this.request);
+        const address = authenticatedUser.address;
+        if (!await authenticatedUser.isLegalOfficer()) {
             throw new UnauthorizedException(`${ address } is not a Legal Officer.`)
         }
         const userIdentity = requireDefined(createOrUpdate.userIdentity);
@@ -123,21 +125,21 @@ export class LegalOfficerController extends ApiController {
         const description: LegalOfficerDescription = {
             address,
             userIdentity: {
-                firstName: requireDefined(userIdentity.firstName),
-                lastName: requireDefined(userIdentity.lastName),
-                email: requireDefined(userIdentity.email),
-                phoneNumber: requireDefined(userIdentity.phoneNumber),
+                firstName: userIdentity.firstName || "",
+                lastName: userIdentity.lastName || "",
+                email: userIdentity.email || "",
+                phoneNumber: userIdentity.phoneNumber || "",
             },
             postalAddress: {
                 company: postalAddress.company || "",
-                line1: requireDefined(postalAddress.line1),
+                line1: postalAddress.line1 || "",
                 line2: postalAddress.line2 || "",
-                postalCode: requireDefined(postalAddress.postalCode),
-                city: requireDefined(postalAddress.city),
-                country: requireDefined(postalAddress.country),
+                postalCode: postalAddress.postalCode || "",
+                city: postalAddress.city || "",
+                country: postalAddress.country || "",
             },
             additionalDetails: createOrUpdate.additionalDetails || "",
-            node: requireDefined(createOrUpdate.node),
+            node: createOrUpdate.node || "",
             logoUrl: createOrUpdate.logoUrl || "",
         }
         const legalOfficer = this.legalOfficerFactory.newLegalOfficer(description);

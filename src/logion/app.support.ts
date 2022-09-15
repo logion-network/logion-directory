@@ -1,20 +1,18 @@
+import { configureDinoloop, configureOpenApi, setOpenApi3, loadSchemasIntoSpec } from "@logion/rest-api-core";
 import { OpenAPIV3 } from "openapi-types";
-import { setOpenApi3, loadSchemasIntoSpec } from "./controllers/doc";
 import { LegalOfficerController, fillInSpec as fillInSpecForLegalOfficer } from "./controllers/legalofficer.controller";
 import express, { Express } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { Dino } from "dinoloop";
-import { ApplicationErrorController } from "./controllers/application.error.controller";
-import { JsonResponse } from "./middlewares/json.response";
 import { Container } from "inversify";
 import { AppContainer } from "./container/app.container";
 import { HealthController } from "./controllers/health.controller";
-import { AuthenticationController } from "./controllers/authentication.controller";
 
 export function predefinedSpec(spec: OpenAPIV3.Document): OpenAPIV3.Document {
     setOpenApi3(spec);
     loadSchemasIntoSpec(spec, "./resources/schemas.json");
+    configureOpenApi(spec);
 
     spec.info = {
         title: "Logion off-chain service API",
@@ -45,11 +43,10 @@ export function setupApp(app: Express) {
     const dino = new Dino(app, '/api');
 
     dino.useRouter(() => express.Router());
+    configureDinoloop(dino);
+
     dino.registerController(LegalOfficerController);
     dino.registerController(HealthController);
-    dino.registerController(AuthenticationController);
-    dino.registerApplicationError(ApplicationErrorController);
-    dino.requestEnd(JsonResponse);
 
     dino.dependencyResolver<Container>(AppContainer,
         (injector, type) => {

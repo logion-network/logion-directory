@@ -1,8 +1,8 @@
-import { connect, disconnect, queryRunner, allMigrations } from "../../helpers/testdb";
+import { TestDb, Log } from "@logion/rest-api-core";
 import { MigrationInterface, QueryRunner } from "typeorm";
-import { Log } from "../../../src/logion/util/Log";
 
 const { logger } = Log;
+const { connect, disconnect, queryRunner, allMigrations } = TestDb;
 
 describe('Migration', () => {
 
