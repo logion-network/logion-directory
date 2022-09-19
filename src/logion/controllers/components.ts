@@ -85,66 +85,6 @@ export interface components {
       /** @description Country */
       country?: string;
     };
-    /**
-     * SignInRequestView
-     * @description the sign-in request
-     */
-    SignInRequestView: {
-      /** @description Addresses of the accounts to be signed in */
-      addresses?: string[];
-    };
-    /**
-     * SignInResponseView
-     * @description the sign-in response
-     */
-    SignInResponseView: {
-      /**
-       * Format: uuid
-       * @description Session identifier
-       * @example 5e4ef4bb-8657-444c-9880-d89e9403fc85
-       */
-      sessionId?: string;
-    };
-    SignatureView: {
-      /** @description <p>A base64-encoded SHA256 hash of a concatenation of</p><ol><li>a resource</li><li>an operation</li><li>the <code>signedOn</code> field</li><li>additional fields in function of the request</li></ol> */
-      signature?: string;
-      /**
-       * Format: date-time
-       * @description The signature's timestamp
-       */
-      signedOn?: string;
-    };
-    TokenView: {
-      /** @description The encoded JWT token */
-      value?: string;
-      /**
-       * Format: date-time
-       * @description The token expiration timestamp
-       */
-      expiredOn?: string;
-    };
-    /**
-     * AuthenticateRequestView
-     * @description the authentication request
-     */
-    AuthenticateRequestView: {
-      /**
-       * @description A map of signatures, index by SS58 addresses of authentication requester
-       * @example [object Object]
-       */
-      signatures?: { [key: string]: components["schemas"]["SignatureView"] };
-    };
-    /**
-     * AuthenticateResponseView
-     * @description the authentication response
-     */
-    AuthenticateResponseView: {
-      /**
-       * @description A map of tokens, indexed by SS58 address of authentication requester
-       * @example [object Object]
-       */
-      tokens?: { [key: string]: components["schemas"]["TokenView"] };
-    };
   };
 }
 

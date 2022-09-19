@@ -6,7 +6,7 @@ import { LegalOfficerRepository, LegalOfficerFactory } from "../model/legaloffic
 import { DirectoryHealthService } from '../services/health.service';
 import { LegalOfficerDataMergeService } from '../services/legalofficerdatamerge.service';
 
-let container = new Container({ defaultScope: "Singleton" });
+let container = new Container({ defaultScope: "Singleton", skipBaseClassChecks: true });
 configureContainer(container);
 
 container.bind(LegalOfficerRepository).toSelf();
