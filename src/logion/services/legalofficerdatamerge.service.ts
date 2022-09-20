@@ -31,11 +31,13 @@ export class LegalOfficerDataMergeService {
 
         const fullList: LegalOfficerDescription[] = [];
         for(const address of Object.keys(chainLegalOfficersMap)) {
-            fullList.push(this.mergeDbChainData({
-                address,
-                chainData: chainLegalOfficersMap[address],
-                dbData: dbLegalOfficersMap[address],
-            }));
+            if(address in dbLegalOfficersMap) {
+                fullList.push(this.mergeDbChainData({
+                    address,
+                    chainData: chainLegalOfficersMap[address],
+                    dbData: dbLegalOfficersMap[address],
+                }));
+            }
         }
 
         fullList.sort((lo1, lo2) => lo1.userIdentity.lastName.localeCompare(lo2.userIdentity.lastName));
