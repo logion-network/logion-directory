@@ -111,25 +111,4 @@ function thenResultMatches(set: LegalOfficerDescription[]) {
 }
 
 const PARTIAL_DESCRIPTION_SET: LegalOfficerDescription[] = LEGAL_OFFICERS.slice(1);
-PARTIAL_DESCRIPTION_SET.push({
-    address: LEGAL_OFFICERS[0].address,
-    userIdentity: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-    },
-    postalAddress: {
-        company: "",
-        line1: "",
-        line2: "",
-        postalCode: "",
-        city: "",
-        country: "",
-    },
-    additionalDetails: "",
-    node: "",
-    logoUrl: "",
-});
-
 const PARTIAL_DB_SET: LegalOfficerAggregateRoot[] = LEGAL_OFFICERS.slice(1).map(mockAggregate);
