@@ -32,10 +32,11 @@ export class LegalOfficerDataMergeService {
         const fullList: LegalOfficerDescription[] = [];
         for(const address of Object.keys(chainLegalOfficersMap)) {
             if(address in dbLegalOfficersMap) {
-                fullList.push(this.mergeDbChainData({
+                fullList.push(await this.mergeDbChainData({
                     address,
                     chainData: chainLegalOfficersMap[address],
                     dbData: dbLegalOfficersMap[address],
+                    chainDataProvider: address => Promise.resolve(chainLegalOfficersMap[address]),
                 }));
             }
         }
@@ -44,12 +45,13 @@ export class LegalOfficerDataMergeService {
         return fullList;
     }
 
-    private mergeDbChainData(args: {
+    private async mergeDbChainData(args: {
         address: string,
         dbData: LegalOfficerAggregateRoot | null,
         chainData: PalletLoAuthorityListLegalOfficerData,
-    }): LegalOfficerDescription {
-        const { address, dbData, chainData } = args;
+        chainDataProvider: (address: string) => Promise<PalletLoAuthorityListLegalOfficerData>,
+    }): Promise<LegalOfficerDescription> {
+        const { address, dbData, chainData, chainDataProvider } = args;
         let description: LegalOfficerDescription;
         if(dbData) {
             description = dbData.getDescription();
@@ -57,10 +59,21 @@ export class LegalOfficerDataMergeService {
             description = this.emptyLegalOfficer(address);
         }
 
-        if(chainData && chainData.baseUrl.isSome) {
-            description = {
-                ...description,
-                node: chainData.baseUrl.unwrap().toUtf8(),
+        if(chainData) {
+            if(chainData.isHost) {
+                description = {
+                    ...description,
+                    node: chainData.asHost.baseUrl.isSome ? chainData.asHost.baseUrl.unwrap().toUtf8() : description.node,
+                    nodeId: chainData.asHost.nodeId.isSome ? chainData.asHost.nodeId.unwrap().toString() : description.nodeId,
+                }
+            } else if(chainData.isGuest) {
+                const hostAddress = chainData.asGuest.toHuman();
+                const host = await chainDataProvider(hostAddress);
+                description = {
+                    ...description,
+                    node: chainData.asHost.baseUrl.isSome ? host.asHost.baseUrl.unwrap().toUtf8() : description.node,
+                    nodeId: chainData.asHost.nodeId.isSome ? host.asHost.nodeId.unwrap().toString() : description.nodeId,
+                }
             }
         }
 
@@ -87,6 +100,7 @@ export class LegalOfficerDataMergeService {
             additionalDetails: "",
             node: "",
             logoUrl: "",
+            nodeId: "",
         };
     }
 
@@ -99,6 +113,7 @@ export class LegalOfficerDataMergeService {
                 address,
                 chainData: chainLegalOfficer.unwrap(),
                 dbData: dbLegalOfficer,
+                chainDataProvider: async address => (await api.query.loAuthorityList.legalOfficerSet(address)).unwrap(),
             })
         } else {
             throw new Error("No legal officer with given address");

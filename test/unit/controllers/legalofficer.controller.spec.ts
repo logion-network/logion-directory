@@ -121,6 +121,8 @@ function mockRepository(container: Container) {
         .returns(Promise.resolve())
 
     const dataMergeService = new Mock<LegalOfficerDataMergeService>();
+    dataMergeService.setup(instance => instance.getLegalOfficer)
+        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)!));
     container.bind(LegalOfficerDataMergeService).toConstantValue(dataMergeService.object());
 
     const factory = new Mock<LegalOfficerFactory>();

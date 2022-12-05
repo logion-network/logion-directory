@@ -95,6 +95,7 @@ export class LegalOfficerController extends ApiController {
             additionalDetails: description.additionalDetails,
             node: description.node,
             logoUrl: description.logoUrl,
+            nodeId: description.nodeId,
         }
     }
 
@@ -141,9 +142,12 @@ export class LegalOfficerController extends ApiController {
             additionalDetails: createOrUpdate.additionalDetails || "",
             node: createOrUpdate.node || "",
             logoUrl: createOrUpdate.logoUrl || "",
+            nodeId: "",
         }
         const legalOfficer = this.legalOfficerFactory.newLegalOfficer(description);
-        await this.legalOfficerRepository.save(legalOfficer)
-        return this.toView(description);
+        await this.legalOfficerRepository.save(legalOfficer);
+
+        const mergedLegalOfficer = await this.legalOfficerDataMergeService.getLegalOfficer(address);
+        return this.toView(mergedLegalOfficer);
     }
 }
