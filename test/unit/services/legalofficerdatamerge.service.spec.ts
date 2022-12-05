@@ -1,5 +1,5 @@
 import { PolkadotService } from "@logion/rest-api-core";
-import { PalletLoAuthorityListLegalOfficerData } from "@polkadot/types/lookup";
+import { PalletLoAuthorityListLegalOfficerData, PalletLoAuthorityListHostData } from "@polkadot/types/lookup";
 import type { ApiPromise } from '@polkadot/api';
 import type { StorageKey, Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -53,33 +53,39 @@ let polkadotService: Mock<PolkadotService>;
 
 const FULL_DESCRIPTION_SET: LegalOfficerDescription[] = LEGAL_OFFICERS;
 
-const FULL_CHAIN_SET: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockChainEntryWithoutBaseUrl);
+const FULL_CHAIN_SET: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockHostChainEntryWithoutBaseUrl);
 
-const FULL_CHAIN_SET_WITH_BASE_URL: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockChainEntryWithBaseUrl);
+const FULL_CHAIN_SET_WITH_BASE_URL: LegalOfficersSet = FULL_DESCRIPTION_SET.map(mockHostChainEntryWithBaseUrl);
 
 const FULL_DESCRIPTION_SET_WITH_BASE_URL: LegalOfficerDescription[] = LEGAL_OFFICERS.map(description => ({
     ...description,
     node: description.node.replace("localhost", "logion.network"),
 }));
 
-function mockChainEntryWithoutBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
-    return mockChainEntry(description, false);
+function mockHostChainEntryWithoutBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
+    return mockHostChainEntry(description, false);
 }
 
-function mockChainEntry(description: LegalOfficerDescription, withBaseUrl: boolean): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
+function mockHostChainEntry(description: LegalOfficerDescription, withBaseUrl: boolean): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
     return [
         {
             toHuman: () => [ description.address ]
         } as StorageKey<[AccountId]>,
         {
             isSome: true,
-            unwrap: () => ({ baseUrl: { isSome: withBaseUrl, unwrap: () => ({ toUtf8: () => description.node.replace("localhost", "logion.network") }) }, nodeId: { isSome: false } })
+            unwrap: () => ({
+                isHost: true,
+                asHost: {
+                    baseUrl: { isSome: withBaseUrl, unwrap: () => ({ toUtf8: () => description.node.replace("localhost", "logion.network") }) },
+                    nodeId: { isSome: false, unwrap: () => { throw new Error() } },
+                } as unknown as PalletLoAuthorityListHostData,
+            })
         } as Option<PalletLoAuthorityListLegalOfficerData>
     ];
 }
 
-function mockChainEntryWithBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
-    return mockChainEntry(description, true);
+function mockHostChainEntryWithBaseUrl(description: LegalOfficerDescription): [StorageKey<[AccountId]>, Option<PalletLoAuthorityListLegalOfficerData>] {
+    return mockHostChainEntry(description, true);
 }
 
 function givenDbLegalOfficers(set: LegalOfficerAggregateRoot[]) {

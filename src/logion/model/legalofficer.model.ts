@@ -67,6 +67,7 @@ export class LegalOfficerAggregateRoot {
             additionalDetails: this.additionalDetails || "",
             node: this.node || "",
             logoUrl: this.logoUrl || "",
+            nodeId: "",
         }
     }
 }
@@ -78,6 +79,7 @@ export interface LegalOfficerDescription {
     readonly additionalDetails: string;
     readonly node: string;
     readonly logoUrl: string;
+    readonly nodeId: string;
 }
 
 export interface UserIdentity {

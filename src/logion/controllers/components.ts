@@ -25,7 +25,7 @@ export interface components {
       /** @description Any additional public info */
       additionalDetails?: string;
       /**
-       * @description The node info
+       * @description The node base URL
        * @example https://node01.logion.network
        */
       node?: string;
@@ -34,6 +34,11 @@ export interface components {
        * @example https://www.logion.network/logo.png
        */
       logoUrl?: string;
+      /**
+       * @description The node ID
+       * @example 12D3KooWBmAwcd4PJNJvfV89HwE48nwkRmAgo8Vy3uQEyNNHBox2
+       */
+      nodeId?: string;
     };
     CreateOrUpdateLegalOfficerView: {
       /** @description The identification data of the legal officer */
