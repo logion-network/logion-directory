@@ -71,8 +71,8 @@ export class LegalOfficerDataMergeService {
                 const host = await chainDataProvider(hostAddress);
                 description = {
                     ...description,
-                    node: chainData.asHost.baseUrl.isSome ? host.asHost.baseUrl.unwrap().toUtf8() : description.node,
-                    nodeId: chainData.asHost.nodeId.isSome ? host.asHost.nodeId.unwrap().toString() : description.nodeId,
+                    node: host.asHost.baseUrl.isSome ? host.asHost.baseUrl.unwrap().toUtf8() : description.node,
+                    nodeId: host.asHost.nodeId.isSome ? host.asHost.nodeId.unwrap().toString() : description.nodeId,
                 }
             }
         }
