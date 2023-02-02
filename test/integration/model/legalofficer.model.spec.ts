@@ -1,5 +1,5 @@
 import { TestDb } from "@logion/rest-api-core";
-import { LegalOfficerAggregateRoot, LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model";
+import { LegalOfficerAggregateRoot, LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model.js";
 
 const { connect, executeScript, disconnect } = TestDb;
 

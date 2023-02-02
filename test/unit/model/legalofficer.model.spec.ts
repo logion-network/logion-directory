@@ -1,5 +1,5 @@
-import { LegalOfficerFactory, LegalOfficerDescription } from "../../../src/logion/model/legalofficer.model";
-import { LEGAL_OFFICERS } from "../../testdata";
+import { LegalOfficerFactory, LegalOfficerDescription } from "../../../src/logion/model/legalofficer.model.js";
+import { LEGAL_OFFICERS } from "../../testdata.js";
 
 describe("LegalOfficerFactory", () => {
 

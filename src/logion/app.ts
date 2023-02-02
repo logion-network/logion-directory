@@ -1,12 +1,13 @@
 import { appDataSource, Log } from "@logion/rest-api-core";
 import express from 'express';
 import expressOasGenerator, { SPEC_OUTPUT_FILE_BEHAVIOR } from 'express-oas-generator';
+import { install } from "source-map-support";
 
-import { setupApp, predefinedSpec } from "./app.support";
+import { setupApp, predefinedSpec } from "./app.support.js";
 
 const { logger } = Log;
 
-require('source-map-support').install();
+install();
 
 const app = express();
 

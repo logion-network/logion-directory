@@ -1,5 +1,5 @@
 import expressOasGenerator, { SPEC_OUTPUT_FILE_BEHAVIOR } from "express-oas-generator";
-import { predefinedSpec, setupApp } from "../../src/logion/app.support";
+import { predefinedSpec, setupApp } from "../../src/logion/app.support.js";
 import express from "express";
 
 describe('app', () => {

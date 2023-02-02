@@ -3,15 +3,15 @@ import request from "supertest";
 import { Container } from "inversify";
 import { Mock, It } from "moq.ts";
 
-import { LegalOfficerController } from "../../../src/logion/controllers/legalofficer.controller";
+import { LegalOfficerController } from "../../../src/logion/controllers/legalofficer.controller.js";
 import {
     LegalOfficerRepository,
     LegalOfficerAggregateRoot,
     LegalOfficerFactory,
     LegalOfficerDescription,
-} from "../../../src/logion/model/legalofficer.model";
-import { LEGAL_OFFICERS } from "../../testdata";
-import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service";
+} from "../../../src/logion/model/legalofficer.model.js";
+import { LEGAL_OFFICERS } from "../../testdata.js";
+import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service.js";
 
 const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].address;
 const { setupApp, mockAuthenticationForUserOrLegalOfficer } = TestApp;

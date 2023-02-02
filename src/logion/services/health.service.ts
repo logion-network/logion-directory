@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { HealthService } from "@logion/rest-api-core";
 
-import { LegalOfficerRepository } from "../model/legalofficer.model";
+import { LegalOfficerRepository } from "../model/legalofficer.model.js";
 
 @injectable()
 export class DirectoryHealthService extends HealthService {
