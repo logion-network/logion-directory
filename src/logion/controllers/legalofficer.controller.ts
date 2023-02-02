@@ -2,15 +2,15 @@ import { addTag, setControllerTag, getDefaultResponses, setPathParameters, getRe
 import { OpenAPIV3 } from "openapi-types";
 import { injectable } from "inversify";
 import { Controller, ApiController, HttpGet, Async, HttpPut } from "dinoloop";
-import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 
-import { components } from "./components";
+import { components } from "./components.js";
 import {
     LegalOfficerRepository,
     LegalOfficerDescription,
     LegalOfficerFactory
-} from "../model/legalofficer.model";
-import { LegalOfficerDataMergeService } from "../services/legalofficerdatamerge.service";
+} from "../model/legalofficer.model.js";
+import { LegalOfficerDataMergeService } from "../services/legalofficerdatamerge.service.js";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';

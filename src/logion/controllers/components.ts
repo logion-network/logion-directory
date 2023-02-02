@@ -3,17 +3,20 @@
  * Do not make direct changes to the file.
  */
 
-export interface paths {}
+
+export type paths = Record<string, never>;
+
+export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
     /**
-     * FetchLegalOfficersView
+     * FetchLegalOfficersView 
      * @description The fetched Legal Officers
      */
     FetchLegalOfficersView: {
       /** @description All the legal officers */
-      legalOfficers?: components["schemas"]["LegalOfficerView"][];
+      legalOfficers?: (components["schemas"]["LegalOfficerView"])[];
     };
     LegalOfficerView: {
       /** @description The SS58 address of the legal officer */
@@ -25,17 +28,17 @@ export interface components {
       /** @description Any additional public info */
       additionalDetails?: string;
       /**
-       * @description The node base URL
+       * @description The node base URL 
        * @example https://node01.logion.network
        */
       node?: string;
       /**
-       * @description The URL to a custom logo
+       * @description The URL to a custom logo 
        * @example https://www.logion.network/logo.png
        */
       logoUrl?: string;
       /**
-       * @description The node ID
+       * @description The node ID 
        * @example 12D3KooWBmAwcd4PJNJvfV89HwE48nwkRmAgo8Vy3uQEyNNHBox2
        */
       nodeId?: string;
@@ -48,18 +51,18 @@ export interface components {
       /** @description Any additional public info */
       additionalDetails?: string;
       /**
-       * @description The node info
+       * @description The node info 
        * @example https://node01.logion.network
        */
       node?: string;
       /**
-       * @description The URL to a custom logo
+       * @description The URL to a custom logo 
        * @example https://www.logion.network/logo.png
        */
       logoUrl?: string;
     };
     /**
-     * UserIdentityView
+     * UserIdentityView 
      * @description Physical person identification data
      */
     UserIdentityView: {
@@ -73,7 +76,7 @@ export interface components {
       phoneNumber?: string;
     };
     /**
-     * PostalAddressView
+     * PostalAddressView 
      * @description A postal address
      */
     PostalAddressView: {
@@ -91,8 +94,13 @@ export interface components {
       country?: string;
     };
   };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 
-export interface operations {}
+export type external = Record<string, never>;
 
-export interface external {}
+export type operations = Record<string, never>;

@@ -1,4 +1,4 @@
-import { LegalOfficerDescription } from "../src/logion/model/legalofficer.model";
+import { LegalOfficerDescription } from "../src/logion/model/legalofficer.model.js";
 
 export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {

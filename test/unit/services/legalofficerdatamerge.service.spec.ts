@@ -5,9 +5,9 @@ import type { StorageKey, Option } from '@polkadot/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { Mock } from 'moq.ts';
 
-import { LegalOfficerAggregateRoot, LegalOfficerDescription, LegalOfficerRepository } from '../../../src/logion/model/legalofficer.model';
-import { LegalOfficerDataMergeService } from '../../../src/logion/services/legalofficerdatamerge.service';
-import { LEGAL_OFFICERS } from '../../../test/testdata';
+import { LegalOfficerAggregateRoot, LegalOfficerDescription, LegalOfficerRepository } from '../../../src/logion/model/legalofficer.model.js';
+import { LegalOfficerDataMergeService } from '../../../src/logion/services/legalofficerdatamerge.service.js';
+import { LEGAL_OFFICERS } from '../../../test/testdata.js';
 
 describe("LegalOfficerDataMergeService", () => {
 

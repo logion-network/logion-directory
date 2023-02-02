@@ -1,12 +1,12 @@
 import { configureDinoloop, configureOpenApi, setOpenApi3, loadSchemasIntoSpec } from "@logion/rest-api-core";
 import { OpenAPIV3 } from "openapi-types";
-import { LegalOfficerController, fillInSpec as fillInSpecForLegalOfficer } from "./controllers/legalofficer.controller";
+import { LegalOfficerController, fillInSpec as fillInSpecForLegalOfficer } from "./controllers/legalofficer.controller.js";
 import express, { Express } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { Dino } from "dinoloop";
 import { Container } from "inversify";
-import { AppContainer } from "./container/app.container";
+import { AppContainer } from "./container/app.container.js";
 
 export function predefinedSpec(spec: OpenAPIV3.Document): OpenAPIV3.Document {
     setOpenApi3(spec);

@@ -1,10 +1,10 @@
 import { configureContainer, HealthService } from '@logion/rest-api-core';
 import { Container } from 'inversify';
 
-import { LegalOfficerController } from '../controllers/legalofficer.controller';
-import { LegalOfficerRepository, LegalOfficerFactory } from "../model/legalofficer.model";
-import { DirectoryHealthService } from '../services/health.service';
-import { LegalOfficerDataMergeService } from '../services/legalofficerdatamerge.service';
+import { LegalOfficerController } from '../controllers/legalofficer.controller.js';
+import { LegalOfficerRepository, LegalOfficerFactory } from "../model/legalofficer.model.js";
+import { DirectoryHealthService } from '../services/health.service.js';
+import { LegalOfficerDataMergeService } from '../services/legalofficerdatamerge.service.js';
 
 let container = new Container({ defaultScope: "Singleton", skipBaseClassChecks: true });
 configureContainer(container);
