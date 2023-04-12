@@ -1,11 +1,10 @@
 {
     "extends": "./tsconfig",
     "compilerOptions": {
-        "inlineSourceMap": true,
+        "inlineSourceMap": true
     },
     "exclude": [
         "test/**/*.ts",
-        "node_modules",
-        "db-tools"
+        "node_modules"
     ]
 }
