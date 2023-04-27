@@ -19,7 +19,7 @@ export class LegalOfficerDataMergeService {
 
         const api = await this.polkadotService.readyApi();
         const chainLegalOfficersMap: Record<string, PalletLoAuthorityListLegalOfficerData> = {};
-        const chainLegalOfficers = await api.query.loAuthorityList.legalOfficerSet.entries();
+        const chainLegalOfficers = await api.polkadot.query.loAuthorityList.legalOfficerSet.entries();
         chainLegalOfficers.forEach(entry => {
             const address = (entry[0].toHuman() as string[])[0];
             const data = entry[1];
@@ -105,14 +105,14 @@ export class LegalOfficerDataMergeService {
 
     async getLegalOfficer(address: string): Promise<LegalOfficerDescription> {
         const api = await this.polkadotService.readyApi();
-        const chainLegalOfficer = await api.query.loAuthorityList.legalOfficerSet(address);
+        const chainLegalOfficer = await api.polkadot.query.loAuthorityList.legalOfficerSet(address);
         if(chainLegalOfficer.isSome) {
             const dbLegalOfficer = await this.legalOfficerRepository.findByAddress(address);
             return this.mergeDbChainData({
                 address,
                 chainData: chainLegalOfficer.unwrap(),
                 dbData: dbLegalOfficer,
-                chainDataProvider: async address => (await api.query.loAuthorityList.legalOfficerSet(address)).unwrap(),
+                chainDataProvider: async address => (await api.polkadot.query.loAuthorityList.legalOfficerSet(address)).unwrap(),
             })
         } else {
             throw new Error("No legal officer with given address");
