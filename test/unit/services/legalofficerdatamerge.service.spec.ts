@@ -1,3 +1,4 @@
+import { LogionNodeApiClass } from "@logion/node-api";
 import { PolkadotService } from "@logion/rest-api-core";
 import { PalletLoAuthorityListLegalOfficerData, PalletLoAuthorityListHostData } from "@polkadot/types/lookup";
 import type { ApiPromise } from '@polkadot/api';
@@ -46,7 +47,7 @@ function givenChainLegalOfficers(set: LegalOfficersSet) {
             }
         }
     };
-    polkadotService.setup(instance => instance.readyApi()).returns(Promise.resolve(api as ApiPromise));
+    polkadotService.setup(instance => instance.readyApi()).returns(Promise.resolve(new LogionNodeApiClass(api as ApiPromise)));
 }
 
 let polkadotService: Mock<PolkadotService>;
