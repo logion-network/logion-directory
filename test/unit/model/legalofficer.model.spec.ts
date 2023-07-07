@@ -18,6 +18,5 @@ describe("LegalOfficerFactory", () => {
         expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity)
         expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress)
         expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails)
-        expect(aggregate.getDescription().node).toEqual(legalOfficer.node)
     }
 })

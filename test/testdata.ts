@@ -18,9 +18,6 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "Belgique"
         },
         additionalDetails: "",
-        node: "http://localhost:8080",
-        logoUrl: "",
-        nodeId: "",
     },
     {
         address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
@@ -39,9 +36,6 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "France"
         },
         additionalDetails: "",
-        node: "http://localhost:8081",
-        logoUrl: "",
-        nodeId: "",
     },
     {
         address: "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
@@ -60,8 +54,5 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "France"
         },
         additionalDetails: "",
-        node: "http://localhost:8082",
-        logoUrl: "",
-        nodeId: "",
     }
 ]

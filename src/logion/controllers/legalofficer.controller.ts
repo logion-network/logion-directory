@@ -8,9 +8,8 @@ import { components } from "./components.js";
 import {
     LegalOfficerRepository,
     LegalOfficerDescription,
-    LegalOfficerFactory
+    LegalOfficerFactory,
 } from "../model/legalofficer.model.js";
-import { LegalOfficerDataMergeService } from "../services/legalofficerdatamerge.service.js";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';
@@ -37,7 +36,6 @@ export class LegalOfficerController extends ApiController {
         private legalOfficerRepository: LegalOfficerRepository,
         private legalOfficerFactory: LegalOfficerFactory,
         private authenticationService: AuthenticationService,
-        private legalOfficerDataMergeService: LegalOfficerDataMergeService,
         ) {
         super();
     }
@@ -52,8 +50,8 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('')
     @Async()
     async fetchLegalOfficers(): Promise<FetchLegalOfficersView> {
-        const legalOfficers = await this.legalOfficerDataMergeService.getAllLegalOfficers();
-        return { legalOfficers: legalOfficers.map(this.toView) }
+        const legalOfficers = await this.legalOfficerRepository.findAll();
+        return { legalOfficers: legalOfficers.map(legalOfficer => legalOfficer.getDescription()).map(this.toView) }
     }
 
     static getLegalOfficer(spec: OpenAPIV3.Document) {
@@ -69,8 +67,12 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('/:address')
     @Async()
     async getLegalOfficer(address: string): Promise<LegalOfficerView> {
-        const legalOfficer = await this.legalOfficerDataMergeService.getLegalOfficer(address);
-        return this.toView(legalOfficer);
+        const legalOfficer = await this.legalOfficerRepository.findByAddress(address);
+        if (legalOfficer) {
+            return this.toView(legalOfficer.getDescription());
+        } else {
+            throw new Error("No legal officer with given address");
+        }
     }
 
     private toView(description: LegalOfficerDescription): LegalOfficerView {
@@ -93,9 +95,6 @@ export class LegalOfficerController extends ApiController {
                 country: postalAddress.country,
             },
             additionalDetails: description.additionalDetails,
-            node: description.node,
-            logoUrl: description.logoUrl,
-            nodeId: description.nodeId,
         }
     }
 
@@ -140,14 +139,10 @@ export class LegalOfficerController extends ApiController {
                 country: postalAddress.country || "",
             },
             additionalDetails: createOrUpdate.additionalDetails || "",
-            node: createOrUpdate.node || "",
-            logoUrl: createOrUpdate.logoUrl || "",
-            nodeId: "",
         }
         const legalOfficer = this.legalOfficerFactory.newLegalOfficer(description);
         await this.legalOfficerRepository.save(legalOfficer);
 
-        const mergedLegalOfficer = await this.legalOfficerDataMergeService.getLegalOfficer(address);
-        return this.toView(mergedLegalOfficer);
+        return this.toView(legalOfficer.getDescription());
     }
 }

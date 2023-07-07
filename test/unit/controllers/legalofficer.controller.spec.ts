@@ -11,7 +11,6 @@ import {
     LegalOfficerDescription,
 } from "../../../src/logion/model/legalofficer.model.js";
 import { LEGAL_OFFICERS } from "../../testdata.js";
-import { LegalOfficerDataMergeService } from "../../../src/logion/services/legalofficerdatamerge.service.js";
 
 const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].address;
 const { setupApp, mockAuthenticationForUserOrLegalOfficer } = TestApp;
@@ -20,7 +19,7 @@ describe("LegalOfficerController", () => {
 
     it("should fetch all legal officers", async () => {
 
-        const app = setupApp(LegalOfficerController, mockDataMergeService)
+        const app = setupApp(LegalOfficerController, mockForFetch)
         await request(app)
             .get("/api/legal-officer")
             .expect(200)
@@ -31,7 +30,7 @@ describe("LegalOfficerController", () => {
     });
 
     it("should fetch one legal officer", async () => {
-        const app = setupApp(LegalOfficerController, mockDataMergeService)
+        const app = setupApp(LegalOfficerController, mockForFetch)
         await request(app)
             .get("/api/legal-officer/5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
             .expect(200)
@@ -50,13 +49,12 @@ describe("LegalOfficerController", () => {
                 expect(postalAddress.postalCode).toBe("1040")
                 expect(postalAddress.city).toBe("Etterbeek")
                 expect(postalAddress.country).toBe("Belgique")
-                expect(response.body.node).toBe("http://localhost:8080")
             });
     })
 
     it("creates or updates details for a legal officer", async () => {
         const payload = { ...LEGAL_OFFICERS[0] }
-        const app = setupApp(LegalOfficerController, mockRepository, mockAuthenticationForUserOrLegalOfficer(true, AUTHENTICATED_ADDRESS))
+        const app = setupApp(LegalOfficerController, mockForCreateOrUpdate, mockAuthenticationForUserOrLegalOfficer(true, AUTHENTICATED_ADDRESS))
         await request(app)
             .put("/api/legal-officer")
             .send(payload)
@@ -76,13 +74,12 @@ describe("LegalOfficerController", () => {
                 expect(postalAddress.postalCode).toBe("1040")
                 expect(postalAddress.city).toBe("Etterbeek")
                 expect(postalAddress.country).toBe("Belgique")
-                expect(response.body.node).toBe("http://localhost:8080")
             });
     })
 
     it("fails to create or update details for a legal officer", async () => {
         const payload = { ...LEGAL_OFFICERS[0] }
-        const app = setupApp(LegalOfficerController, mockRepository, mockAuthenticationForUserOrLegalOfficer(false))
+        const app = setupApp(LegalOfficerController, mockForCreateOrUpdate, mockAuthenticationForUserOrLegalOfficer(false))
         await request(app)
             .put("/api/legal-officer")
             .send(payload)
@@ -91,22 +88,26 @@ describe("LegalOfficerController", () => {
     })
 })
 
-function mockDataMergeService(container: Container) {
+function mockForFetch(container: Container) {
     const repository = new Mock<LegalOfficerRepository>();
     container.bind(LegalOfficerRepository).toConstantValue(repository.object());
 
-    const dataMergeService = new Mock<LegalOfficerDataMergeService>();
-    container.bind(LegalOfficerDataMergeService).toConstantValue(dataMergeService.object());
-    dataMergeService.setup(instance => instance.getAllLegalOfficers())
-        .returns(Promise.resolve(LEGAL_OFFICERS))
-    dataMergeService.setup(instance => instance.getLegalOfficer)
-        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)!))
+    const legalOfficer0 = mockLegalOfficer(repository, 0);
+    const legalOfficers = [
+        legalOfficer0,
+        mockLegalOfficer(repository, 1),
+        mockLegalOfficer(repository, 2),
+    ];
+    repository.setup(instance => instance.findAll())
+        .returns(Promise.resolve(legalOfficers));
+    repository.setup(instance => instance.findByAddress(It.IsAny<string>()))
+        .returns(Promise.resolve(legalOfficer0));
 
     const factory = new Mock<LegalOfficerFactory>();
     container.bind(LegalOfficerFactory).toConstantValue(factory.object());
 }
 
-function mockRepository(container: Container) {
+function mockForCreateOrUpdate(container: Container) {
     const repository = new Mock<LegalOfficerRepository>();
     container.bind(LegalOfficerRepository).toConstantValue(repository.object())
     const legalOfficer0 = mockLegalOfficer(repository, 0);
@@ -119,11 +120,6 @@ function mockRepository(container: Container) {
         .returns(Promise.resolve(legalOfficers))
     repository.setup(instance => instance.save(It.IsAny<LegalOfficerAggregateRoot>()))
         .returns(Promise.resolve())
-
-    const dataMergeService = new Mock<LegalOfficerDataMergeService>();
-    dataMergeService.setup(instance => instance.getLegalOfficer)
-        .returns((address: string) => Promise.resolve(LEGAL_OFFICERS.find(description => description.address === address)!));
-    container.bind(LegalOfficerDataMergeService).toConstantValue(dataMergeService.object());
 
     const factory = new Mock<LegalOfficerFactory>();
     container.bind(LegalOfficerFactory).toConstantValue(factory.object())
