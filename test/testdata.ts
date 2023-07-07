@@ -18,7 +18,6 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "Belgique"
         },
         additionalDetails: "",
-        logoUrl: "",
     },
     {
         address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
@@ -37,7 +36,6 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "France"
         },
         additionalDetails: "",
-        logoUrl: "",
     },
     {
         address: "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
@@ -56,6 +54,5 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
             country: "France"
         },
         additionalDetails: "",
-        logoUrl: "",
     }
 ]

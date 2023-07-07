@@ -27,11 +27,6 @@ export interface components {
       postalAddress?: components["schemas"]["PostalAddressView"];
       /** @description Any additional public info */
       additionalDetails?: string;
-      /**
-       * @description The URL to a custom logo 
-       * @example https://www.logion.network/logo.png
-       */
-      logoUrl?: string;
     };
     CreateOrUpdateLegalOfficerView: {
       /** @description The identification data of the legal officer */
@@ -40,11 +35,6 @@ export interface components {
       postalAddress?: components["schemas"]["PostalAddressView"];
       /** @description Any additional public info */
       additionalDetails?: string;
-      /**
-       * @description The URL to a custom logo 
-       * @example https://www.logion.network/logo.png
-       */
-      logoUrl?: string;
     };
     /**
      * UserIdentityView 

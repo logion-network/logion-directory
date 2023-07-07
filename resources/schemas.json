@@ -39,11 +39,6 @@
           "additionalDetails": {
             "type": "string",
             "description": "Any additional public info"
-          },
-          "logoUrl": {
-            "type": "string",
-            "description": "The URL to a custom logo",
-            "example": "https://www.logion.network/logo.png"
           }
         }
       },
@@ -61,11 +56,6 @@
           "additionalDetails": {
             "type": "string",
             "description": "Any additional public info"
-          },
-          "logoUrl": {
-            "type": "string",
-            "description": "The URL to a custom logo",
-            "example": "https://www.logion.network/logo.png"
           }
         }
       },
