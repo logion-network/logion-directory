@@ -28,20 +28,10 @@ export interface components {
       /** @description Any additional public info */
       additionalDetails?: string;
       /**
-       * @description The node base URL 
-       * @example https://node01.logion.network
-       */
-      node?: string;
-      /**
        * @description The URL to a custom logo 
        * @example https://www.logion.network/logo.png
        */
       logoUrl?: string;
-      /**
-       * @description The node ID 
-       * @example 12D3KooWBmAwcd4PJNJvfV89HwE48nwkRmAgo8Vy3uQEyNNHBox2
-       */
-      nodeId?: string;
     };
     CreateOrUpdateLegalOfficerView: {
       /** @description The identification data of the legal officer */
@@ -50,11 +40,6 @@ export interface components {
       postalAddress?: components["schemas"]["PostalAddressView"];
       /** @description Any additional public info */
       additionalDetails?: string;
-      /**
-       * @description The node info 
-       * @example https://node01.logion.network
-       */
-      node?: string;
       /**
        * @description The URL to a custom logo 
        * @example https://www.logion.network/logo.png

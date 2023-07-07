@@ -41,9 +41,6 @@ export class LegalOfficerAggregateRoot {
     @Column({ length: 255, name: "additional_details", nullable: true })
     additionalDetails?: string;
 
-    @Column({ length: 255 })
-    node?: string;
-
     @Column({ length: 255, name: "logo_url", nullable: true })
     logoUrl?: string;
 
@@ -65,9 +62,7 @@ export class LegalOfficerAggregateRoot {
                 country: this.country || "",
             },
             additionalDetails: this.additionalDetails || "",
-            node: this.node || "",
             logoUrl: this.logoUrl || "",
-            nodeId: "",
         }
     }
 }
@@ -77,9 +72,7 @@ export interface LegalOfficerDescription {
     readonly userIdentity: UserIdentity;
     readonly postalAddress: PostalAddress;
     readonly additionalDetails: string;
-    readonly node: string;
     readonly logoUrl: string;
-    readonly nodeId: string;
 }
 
 export interface UserIdentity {
@@ -120,7 +113,6 @@ export class LegalOfficerFactory {
         legalOfficer.country = postalAddress.country;
 
         legalOfficer.additionalDetails = description.additionalDetails;
-        legalOfficer.node = description.node;
         legalOfficer.logoUrl = description.logoUrl;
 
         return legalOfficer;

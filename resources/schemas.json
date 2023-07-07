@@ -40,20 +40,10 @@
             "type": "string",
             "description": "Any additional public info"
           },
-          "node": {
-            "type": "string",
-            "description": "The node base URL",
-            "example": "https://node01.logion.network"
-          },
           "logoUrl": {
             "type": "string",
             "description": "The URL to a custom logo",
             "example": "https://www.logion.network/logo.png"
-          },
-          "nodeId": {
-            "type": "string",
-            "description": "The node ID",
-            "example": "12D3KooWBmAwcd4PJNJvfV89HwE48nwkRmAgo8Vy3uQEyNNHBox2"
           }
         }
       },
@@ -71,11 +61,6 @@
           "additionalDetails": {
             "type": "string",
             "description": "Any additional public info"
-          },
-          "node": {
-            "type": "string",
-            "description": "The node info",
-            "example": "https://node01.logion.network"
           },
           "logoUrl": {
             "type": "string",
