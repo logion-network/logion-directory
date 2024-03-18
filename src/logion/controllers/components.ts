@@ -11,12 +11,12 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
-     * FetchLegalOfficersView 
+     * FetchLegalOfficersView
      * @description The fetched Legal Officers
      */
     FetchLegalOfficersView: {
       /** @description All the legal officers */
-      legalOfficers?: (components["schemas"]["LegalOfficerView"])[];
+      legalOfficers?: components["schemas"]["LegalOfficerView"][];
     };
     LegalOfficerView: {
       /** @description The SS58 address of the legal officer */
@@ -37,7 +37,7 @@ export interface components {
       additionalDetails?: string;
     };
     /**
-     * UserIdentityView 
+     * UserIdentityView
      * @description Physical person identification data
      */
     UserIdentityView: {
@@ -51,7 +51,7 @@ export interface components {
       phoneNumber?: string;
     };
     /**
-     * PostalAddressView 
+     * PostalAddressView
      * @description A postal address
      */
     PostalAddressView: {
@@ -75,6 +75,8 @@ export interface components {
   headers: never;
   pathItems: never;
 }
+
+export type $defs = Record<string, never>;
 
 export type external = Record<string, never>;
 
