@@ -10,6 +10,7 @@ import {
     LegalOfficerDescription,
     LegalOfficerFactory,
 } from "../model/legalofficer.model.js";
+import { ValidAccountId } from "@logion/node-api";
 
 export function fillInSpec(spec: OpenAPIV3.Document): void {
     const tagName = 'Legal Officers';
@@ -67,7 +68,8 @@ export class LegalOfficerController extends ApiController {
     @HttpGet('/:address')
     @Async()
     async getLegalOfficer(address: string): Promise<LegalOfficerView> {
-        const legalOfficer = await this.legalOfficerRepository.findByAddress(address);
+        const account = ValidAccountId.polkadot(address);
+        const legalOfficer = await this.legalOfficerRepository.findByAccount(account);
         if (legalOfficer) {
             return this.toView(legalOfficer.getDescription());
         } else {
@@ -79,7 +81,7 @@ export class LegalOfficerController extends ApiController {
         const userIdentity = description.userIdentity;
         const postalAddress = description.postalAddress;
         return {
-            address: description.address,
+            address: description.account.address,
             userIdentity: {
                 firstName: userIdentity.firstName,
                 lastName: userIdentity.lastName,
@@ -116,14 +118,14 @@ export class LegalOfficerController extends ApiController {
     @Async()
     async createOrUpdateLegalOfficer(createOrUpdate: CreateOrUpdateLegalOfficerView): Promise<LegalOfficerView> {
         const authenticatedUser = await this.authenticationService.authenticatedUser(this.request);
-        const address = authenticatedUser.address;
+        const account = authenticatedUser.toValidAccountId();
         if (!await authenticatedUser.isLegalOfficer()) {
-            throw new UnauthorizedException(`${ address } is not a Legal Officer.`)
+            throw new UnauthorizedException(`${ account.address } is not a Legal Officer.`);
         }
         const userIdentity = requireDefined(createOrUpdate.userIdentity);
         const postalAddress = requireDefined(createOrUpdate.postalAddress);
         const description: LegalOfficerDescription = {
-            address,
+            account,
             userIdentity: {
                 firstName: userIdentity.firstName || "",
                 lastName: userIdentity.lastName || "",

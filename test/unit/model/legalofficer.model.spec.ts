@@ -14,9 +14,9 @@ describe("LegalOfficerFactory", () => {
 
     function testNewLegalOfficer(legalOfficer: LegalOfficerDescription) {
         let aggregate = factory.newLegalOfficer(legalOfficer)
-        expect(aggregate.address).toBe(legalOfficer.address)
-        expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity)
-        expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress)
-        expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails)
+        expect(aggregate.address).toBe(legalOfficer.account.getAddress(42));
+        expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity);
+        expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress);
+        expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails);
     }
 })

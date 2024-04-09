@@ -1,8 +1,9 @@
+import { ValidAccountId } from "@logion/node-api";
 import { LegalOfficerDescription } from "../src/logion/model/legalofficer.model.js";
 
 export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
     {
-        address: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+        account: ValidAccountId.polkadot("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"),
         userIdentity: {
             firstName: "Alice",
             lastName: "Alice",
@@ -20,7 +21,7 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
         additionalDetails: "",
     },
     {
-        address: "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+        account: ValidAccountId.polkadot("5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty"),
         userIdentity: {
             firstName: "Bob",
             lastName: "Bob",
@@ -38,7 +39,7 @@ export const LEGAL_OFFICERS: LegalOfficerDescription[] = [
         additionalDetails: "",
     },
     {
-        address: "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y",
+        account: ValidAccountId.polkadot("5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y"),
         userIdentity: {
             firstName: "Charlie",
             lastName: "Charlie",

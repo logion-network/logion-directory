@@ -11,8 +11,9 @@ import {
     LegalOfficerDescription,
 } from "../../../src/logion/model/legalofficer.model.js";
 import { LEGAL_OFFICERS } from "../../testdata.js";
+import { ValidAccountId } from "@logion/node-api";
 
-const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].address;
+const AUTHENTICATED_ADDRESS = LEGAL_OFFICERS[0].account;
 const { setupApp, mockAuthenticationForUserOrLegalOfficer } = TestApp;
 
 describe("LegalOfficerController", () => {
@@ -32,11 +33,11 @@ describe("LegalOfficerController", () => {
     it("should fetch one legal officer", async () => {
         const app = setupApp(LegalOfficerController, mockForFetch)
         await request(app)
-            .get("/api/legal-officer/5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+            .get("/api/legal-officer/vQx5kESPn8dWyX4KxMCKqUyCaWUwtui1isX6PVNcZh2Ghjitr")
             .expect(200)
             .expect('Content-Type', /application\/json/)
             .then(response => {
-                expect(response.body.address).toBe("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
+                expect(response.body.address).toBe("vQx5kESPn8dWyX4KxMCKqUyCaWUwtui1isX6PVNcZh2Ghjitr")
                 const userIdentity = response.body.userIdentity;
                 expect(userIdentity.firstName).toBe("Alice")
                 expect(userIdentity.lastName).toBe("Alice")
@@ -61,7 +62,7 @@ describe("LegalOfficerController", () => {
             .expect(200)
             .expect('Content-Type', /application\/json/)
             .then(response => {
-                expect(response.body.address).toBe(AUTHENTICATED_ADDRESS)
+                expect(response.body.address).toBe(AUTHENTICATED_ADDRESS.address)
                 const userIdentity = response.body.userIdentity;
                 expect(userIdentity.firstName).toBe("Alice")
                 expect(userIdentity.lastName).toBe("Alice")
@@ -84,7 +85,7 @@ describe("LegalOfficerController", () => {
             .put("/api/legal-officer")
             .send(payload)
             .expect(401)
-            .expect('Content-Type', /application\/json/)
+            .expect('Content-Type', /application\/json/);
     })
 })
 
@@ -100,7 +101,7 @@ function mockForFetch(container: Container) {
     ];
     repository.setup(instance => instance.findAll())
         .returns(Promise.resolve(legalOfficers));
-    repository.setup(instance => instance.findByAddress(It.IsAny<string>()))
+    repository.setup(instance => instance.findByAccount(It.IsAny<string>()))
         .returns(Promise.resolve(legalOfficer0));
 
     const factory = new Mock<LegalOfficerFactory>();
@@ -109,7 +110,7 @@ function mockForFetch(container: Container) {
 
 function mockForCreateOrUpdate(container: Container) {
     const repository = new Mock<LegalOfficerRepository>();
-    container.bind(LegalOfficerRepository).toConstantValue(repository.object())
+    container.bind(LegalOfficerRepository).toConstantValue(repository.object());
     const legalOfficer0 = mockLegalOfficer(repository, 0);
     const legalOfficers = [
         legalOfficer0,
@@ -117,21 +118,21 @@ function mockForCreateOrUpdate(container: Container) {
         mockLegalOfficer(repository, 2),
     ];
     repository.setup(instance => instance.findAll())
-        .returns(Promise.resolve(legalOfficers))
+        .returns(Promise.resolve(legalOfficers));
     repository.setup(instance => instance.save(It.IsAny<LegalOfficerAggregateRoot>()))
-        .returns(Promise.resolve())
+        .returns(Promise.resolve());
 
     const factory = new Mock<LegalOfficerFactory>();
-    container.bind(LegalOfficerFactory).toConstantValue(factory.object())
+    container.bind(LegalOfficerFactory).toConstantValue(factory.object());
     factory.setup(instance => instance.newLegalOfficer(It.IsAny<LegalOfficerDescription>()))
-        .returns(legalOfficer0)
+        .returns(legalOfficer0);
 }
 
 function mockLegalOfficer(repository: Mock<LegalOfficerRepository>, idx:number):LegalOfficerAggregateRoot {
     const legalOfficer = new Mock<LegalOfficerAggregateRoot>();
-    legalOfficer.setup(instance => instance.getDescription()).returns(LEGAL_OFFICERS[idx])
-    legalOfficer.setup(instance => instance.address).returns(LEGAL_OFFICERS[idx].address)
-    repository.setup(instance => instance.findByAddress(It.Is<string>(address => address === LEGAL_OFFICERS[idx].address)))
-        .returns(Promise.resolve(legalOfficer.object()))
+    legalOfficer.setup(instance => instance.getDescription()).returns(LEGAL_OFFICERS[idx]);
+    legalOfficer.setup(instance => instance.address).returns(LEGAL_OFFICERS[idx].account.getAddress(42));
+    repository.setup(instance => instance.findByAccount(It.Is<ValidAccountId>(account => account.equals(LEGAL_OFFICERS[idx].account))))
+        .returns(Promise.resolve(legalOfficer.object()));
     return legalOfficer.object();
 }
