@@ -9,6 +9,7 @@ import {
     LegalOfficerAggregateRoot,
     LegalOfficerFactory,
     LegalOfficerDescription,
+    DB_SS58_PREFIX,
 } from "../../../src/logion/model/legalofficer.model.js";
 import { LEGAL_OFFICERS } from "../../testdata.js";
 import { ValidAccountId } from "@logion/node-api";
@@ -131,7 +132,7 @@ function mockForCreateOrUpdate(container: Container) {
 function mockLegalOfficer(repository: Mock<LegalOfficerRepository>, idx:number):LegalOfficerAggregateRoot {
     const legalOfficer = new Mock<LegalOfficerAggregateRoot>();
     legalOfficer.setup(instance => instance.getDescription()).returns(LEGAL_OFFICERS[idx]);
-    legalOfficer.setup(instance => instance.address).returns(LEGAL_OFFICERS[idx].account.getAddress(42));
+    legalOfficer.setup(instance => instance.address).returns(LEGAL_OFFICERS[idx].account.getAddress(DB_SS58_PREFIX));
     repository.setup(instance => instance.findByAccount(It.Is<ValidAccountId>(account => account.equals(LEGAL_OFFICERS[idx].account))))
         .returns(Promise.resolve(legalOfficer.object()));
     return legalOfficer.object();

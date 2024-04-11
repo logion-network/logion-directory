@@ -3,6 +3,8 @@ import { Entity, Column, PrimaryColumn, Repository } from "typeorm";
 import { injectable } from "inversify";
 import { ValidAccountId } from "@logion/node-api";
 
+export const DB_SS58_PREFIX = 42;
+
 @Entity("legal_officer")
 export class LegalOfficerAggregateRoot {
 
@@ -92,7 +94,7 @@ export class LegalOfficerFactory {
 
     newLegalOfficer(description: LegalOfficerDescription): LegalOfficerAggregateRoot {
         const legalOfficer = new LegalOfficerAggregateRoot();
-        legalOfficer.address = description.account.getAddress(42);
+        legalOfficer.address = description.account.getAddress(DB_SS58_PREFIX);
 
         const userIdentity = description.userIdentity;
         legalOfficer.firstName = userIdentity.firstName;
@@ -124,7 +126,7 @@ export class LegalOfficerRepository {
     readonly repository: Repository<LegalOfficerAggregateRoot>
 
     public findByAccount(address: ValidAccountId): Promise<LegalOfficerAggregateRoot | null> {
-        return this.repository.findOneBy({ address: address.getAddress(42) });
+        return this.repository.findOneBy({ address: address.getAddress(DB_SS58_PREFIX) });
     }
 
     public findAll(): Promise<LegalOfficerAggregateRoot []> {
