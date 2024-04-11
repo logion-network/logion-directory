@@ -1,4 +1,4 @@
-import { LegalOfficerFactory, LegalOfficerDescription } from "../../../src/logion/model/legalofficer.model.js";
+import { LegalOfficerFactory, LegalOfficerDescription, DB_SS58_PREFIX } from "../../../src/logion/model/legalofficer.model.js";
 import { LEGAL_OFFICERS } from "../../testdata.js";
 
 describe("LegalOfficerFactory", () => {
@@ -14,9 +14,9 @@ describe("LegalOfficerFactory", () => {
 
     function testNewLegalOfficer(legalOfficer: LegalOfficerDescription) {
         let aggregate = factory.newLegalOfficer(legalOfficer)
-        expect(aggregate.address).toBe(legalOfficer.address)
-        expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity)
-        expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress)
-        expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails)
+        expect(aggregate.address).toBe(legalOfficer.account.getAddress(DB_SS58_PREFIX));
+        expect(aggregate.getDescription().userIdentity).toEqual(legalOfficer.userIdentity);
+        expect(aggregate.getDescription().postalAddress).toEqual(legalOfficer.postalAddress);
+        expect(aggregate.getDescription().additionalDetails).toEqual(legalOfficer.additionalDetails);
     }
 })

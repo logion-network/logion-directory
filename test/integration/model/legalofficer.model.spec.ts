@@ -1,5 +1,6 @@
 import { TestDb } from "@logion/rest-api-core";
 import { LegalOfficerAggregateRoot, LegalOfficerRepository } from "../../../src/logion/model/legalofficer.model.js";
+import { ValidAccountId } from "@logion/node-api";
 
 const { connect, executeScript, disconnect } = TestDb;
 
@@ -18,7 +19,8 @@ describe("LegalOfficerRepository", () => {
     });
 
     it("findByAddress", async () => {
-        let result = await repository.findByAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+        const account = ValidAccountId.polkadot("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
+        let result = await repository.findByAccount(account);
         expect(result?.city).toBe("Etterbeek")
     })
 
