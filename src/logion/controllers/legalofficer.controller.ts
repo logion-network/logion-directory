@@ -118,7 +118,7 @@ export class LegalOfficerController extends ApiController {
     @Async()
     async createOrUpdateLegalOfficer(createOrUpdate: CreateOrUpdateLegalOfficerView): Promise<LegalOfficerView> {
         const authenticatedUser = await this.authenticationService.authenticatedUser(this.request);
-        const account = authenticatedUser.toValidAccountId();
+        const account = authenticatedUser.validAccountId;
         if (!await authenticatedUser.isLegalOfficer()) {
             throw new UnauthorizedException(`${ account.address } is not a Legal Officer.`);
         }
