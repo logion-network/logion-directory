@@ -1,6 +1,6 @@
 {
     "name": "logion-directory",
-    "version": "0.9.4-1",
+    "version": "0.10.0",
     "private": true,
     "author": {
         "name": "Logion Team",
@@ -23,8 +23,8 @@
         "typeorm": "node ./node_modules/typeorm/cli.js -d ./dist/db-tools/ormconfig.js"
     },
     "dependencies": {
-        "@logion/node-api": "^0.29.0-5",
-        "@logion/rest-api-core": "^0.4.8-8",
+        "@logion/node-api": "^0.29.0",
+        "@logion/rest-api-core": "^0.5.0",
         "ansi-regex": "^6.0.1",
         "body-parser": "^1.20.2",
         "bson": "^4.7.0",
